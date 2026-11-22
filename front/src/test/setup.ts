@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
+import { Blob as BlobNode, File as FileNode } from "node:buffer";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import { servidor } from "./servidor";
 
@@ -22,6 +23,11 @@ globalThis.ResizeObserver ??= class {
     unobserve() {}
     disconnect() {}
 } as unknown as typeof ResizeObserver;
+
+// O interceptador do MSW monta um Request nativo do Node a partir do corpo do XMLHttpRequest; com o
+// FormData/File do jsdom o multipart não é serializado. Os testes usam as implementações do Node.
+const FormDataNode = (await new Response("", { headers: { "content-type": "application/x-www-form-urlencoded" } }).formData()).constructor as typeof FormData;
+Object.assign(globalThis, { FormData: FormDataNode, File: FileNode, Blob: BlobNode });
 
 /** Navegação simulada: as telas chamam `useNavigate()`; os testes conferem os destinos. */
 export const navegar = vi.fn();
