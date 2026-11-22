@@ -1,0 +1,98 @@
+/*
+ * Identidade visual do DataQualiSUS, no padrão das aplicações da LAWD (SimMAP): cores, fontes,
+ * fundo com brilhos coloridos, scrollbar e efeitos de vidro. Sobrescreve apenas as paletas
+ * `brand` e `neutral` do Untitled UI; formas, raios e tamanhos continuam os do Untitled UI.
+ * Não editar styles/theme.css: os tokens semânticos (bg-primary, text-secondary...) derivam daqui.
+ */
+
+@theme {
+    --font-body: var(--font-museo, "MuseoModerno"), -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-display: var(--font-museo, "MuseoModerno"), -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-mono: var(--font-jetbrains, "JetBrains Mono"), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* Paleta brand: ciano-esverdeado */
+    --color-brand-25: rgb(240 253 252);
+    --color-brand-50: rgb(229 251 249);
+    --color-brand-100: rgb(200 245 241);
+    --color-brand-200: rgb(152 235 228);
+    --color-brand-300: rgb(94 219 210);
+    --color-brand-400: rgb(45 197 189);
+    --color-brand-500: rgb(20 170 165);
+    --color-brand-600: rgb(13 138 137);
+    --color-brand-700: rgb(16 110 111);
+    --color-brand-800: rgb(19 87 89);
+    --color-brand-900: rgb(20 72 74);
+    --color-brand-950: rgb(7 43 46);
+
+    /* Paleta neutral: cinzas azulados frios (base dos fundos, textos e bordas) */
+    --color-neutral-25: rgb(251 252 253);
+    --color-neutral-50: rgb(245 247 250);
+    --color-neutral-100: rgb(236 240 245);
+    --color-neutral-200: rgb(220 227 236);
+    --color-neutral-300: rgb(196 206 219);
+    --color-neutral-400: rgb(144 158 178);
+    --color-neutral-500: rgb(103 118 140);
+    --color-neutral-600: rgb(76 90 112);
+    --color-neutral-700: rgb(53 65 85);
+    --color-neutral-800: rgb(33 43 61);
+    --color-neutral-900: rgb(20 28 43);
+    --color-neutral-950: rgb(10 15 26);
+}
+
+/* Fundo com brilhos coloridos (sem grade), fixo sob o conteúdo */
+body {
+    background-color: var(--color-bg-primary);
+    background-image:
+        radial-gradient(40rem 28rem at 8% -8%, color-mix(in srgb, var(--color-brand-500) 22%, transparent), transparent 70%),
+        radial-gradient(34rem 26rem at 100% 10%, color-mix(in srgb, rgb(124 58 237) 16%, transparent), transparent 70%),
+        radial-gradient(38rem 30rem at 60% 110%, color-mix(in srgb, rgb(14 165 233) 14%, transparent), transparent 70%);
+    background-attachment: fixed;
+}
+
+/* Scrollbar discreta nos dois modos */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-neutral-500) 45%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    background-color: color-mix(in srgb, var(--color-neutral-500) 45%, transparent);
+}
+
+/*
+ * Vidro. Somente `glass` e `glass-strong` usam backdrop-filter (vidro dentro de vidro não desfoca
+ * de novo). A borda vem do `ring-*` do componente.
+ */
+@utility glass {
+    background-color: color-mix(in srgb, var(--color-bg-primary) 62%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+}
+
+@utility glass-strong {
+    background-color: color-mix(in srgb, var(--color-bg-primary) 84%, transparent);
+    backdrop-filter: blur(26px) saturate(150%);
+}
+
+@utility glass-field {
+    background-color: color-mix(in srgb, var(--color-bg-primary) 48%, transparent);
+}
+
+@utility glass-control {
+    background-color: color-mix(in srgb, var(--color-bg-primary) 40%, transparent);
+}
+
+@utility glass-brand {
+    background-color: color-mix(in srgb, var(--color-brand-600) 88%, transparent);
+}
+
+@utility glass-destructive {
+    background-color: color-mix(in srgb, var(--color-bg-error-solid) 88%, transparent);
+}
