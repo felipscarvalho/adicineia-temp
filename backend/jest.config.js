@@ -8,7 +8,7 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.json', isolatedModules: true }],
+    '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.json' }],
   },
   collectCoverageFrom: ['**/*.ts', '!**/*.spec.ts', '!main.ts', '!cli/**', '!**/*.module.ts', '!**/__testes__/**'],
   coverageDirectory: '../coverage/unit',

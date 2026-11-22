@@ -1,7 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
+import { Publica } from '../auth/decoradores';
 import { DatabaseService } from '../database/database.service';
 
 /** Verificação básica de disponibilidade da API e do banco (P3, seção 11). */
+@Publica()
 @Controller('saude')
 export class SaudeController {
   constructor(private readonly banco: DatabaseService) {}

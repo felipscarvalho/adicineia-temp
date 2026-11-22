@@ -5,6 +5,12 @@
  */
 const path = require('path');
 
+// O globalSetup é carregado pelo Node fora do resolvedor do Jest; expõe as dependências do backend
+// para os arquivos de /tests sem duplicar node_modules na raiz.
+const dependenciasBackend = path.resolve(__dirname, 'node_modules');
+process.env.NODE_PATH = [dependenciasBackend, process.env.NODE_PATH].filter(Boolean).join(path.delimiter);
+require('module').Module._initPaths();
+
 module.exports = {
   rootDir: path.resolve(__dirname, '..'),
   roots: ['<rootDir>/tests/integracao'],
@@ -15,7 +21,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': [
       require.resolve('ts-jest'),
-      { tsconfig: path.resolve(__dirname, 'tsconfig.json'), isolatedModules: true },
+      { tsconfig: path.resolve(__dirname, 'tsconfig.json') },
     ],
   },
   globalSetup: '<rootDir>/tests/integracao/suporte/preparar-banco.ts',
