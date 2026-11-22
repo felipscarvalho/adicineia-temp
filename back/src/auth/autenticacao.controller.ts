@@ -4,17 +4,20 @@ import { AutenticacaoService } from './autenticacao.service';
 import { NOME_COOKIE_SESSAO, opcoesCookieSessao } from './cookie-sessao';
 import { ExigeOperacao, Publica, UsuarioAtual } from './decoradores';
 import { EntrarDto } from './dto/entrar.dto';
-import { Operacao } from './matriz-permissoes';
+import { Operacao, operacoesDoPapel } from './matriz-permissoes';
 import { UsuarioAutenticado } from './papel-usuario';
 
 interface SessaoDto {
   usuario: { id: string; nome: string; email: string; papel: string };
+  /** Operações permitidas ao perfil; a verificação de verdade continua no AutorizacaoGuard. */
+  permissoes: Operacao[];
   csrfToken: string;
 }
 
 function paraSessaoDto(usuario: UsuarioAutenticado): SessaoDto {
   return {
     usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, papel: usuario.papel },
+    permissoes: operacoesDoPapel(usuario.papel),
     csrfToken: usuario.csrfToken,
   };
 }

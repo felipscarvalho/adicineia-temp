@@ -71,3 +71,10 @@ export function verificarPermissao(papel: PapelUsuario, operacao: Operacao | und
   }
   return MATRIZ_PERMISSOES[operacao]?.includes(papel) ?? false;
 }
+
+/** Operações liberadas para o perfil, devolvidas na sessão para a interface ocultar ações vedadas. */
+export function operacoesDoPapel(papel: PapelUsuario): Operacao[] {
+  return (Object.keys(MATRIZ_PERMISSOES) as Operacao[]).filter((operacao) =>
+    MATRIZ_PERMISSOES[operacao].includes(papel),
+  );
+}

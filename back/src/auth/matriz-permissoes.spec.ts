@@ -1,4 +1,4 @@
-import { MATRIZ_PERMISSOES, Operacao, verificarPermissao } from './matriz-permissoes';
+import { MATRIZ_PERMISSOES, Operacao, operacoesDoPapel, verificarPermissao } from './matriz-permissoes';
 import { PapelUsuario } from './papel-usuario';
 
 const { ANALISTA, GESTOR, EQUIPE_TECNICA } = PapelUsuario;
@@ -43,5 +43,14 @@ describe('Matriz perfil × operação (P1, seção 8.3)', () => {
   it('nega operação não declarada ou desconhecida', () => {
     expect(verificarPermissao(ANALISTA, undefined)).toBe(false);
     expect(verificarPermissao(ANALISTA, 'INEXISTENTE' as Operacao)).toBe(false);
+  });
+
+  it('lista as operações de cada perfil conforme a matriz', () => {
+    expect(operacoesDoPapel(EQUIPE_TECNICA).sort()).toEqual(
+      [Operacao.AUDITORIA_CONSULTAR, Operacao.AUDITORIA_EXPORTAR, Operacao.SESSAO_PROPRIA].sort(),
+    );
+    expect(operacoesDoPapel(GESTOR)).toEqual(expect.arrayContaining([Operacao.DIAGNOSTICO_CONSULTAR]));
+    expect(operacoesDoPapel(GESTOR)).not.toContain(Operacao.DATASET_IMPORTAR);
+    expect(operacoesDoPapel(ANALISTA)).toHaveLength(Object.values(Operacao).length);
   });
 });
