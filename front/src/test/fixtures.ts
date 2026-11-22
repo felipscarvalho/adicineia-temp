@@ -1,4 +1,5 @@
 import type { Dataset } from "@/types/datasets";
+import type { Vocabulario } from "@/types/rules/vocabulario";
 
 /** Dados de exemplo compartilhados pelos testes (sintéticos). */
 export const datasetExemplo: Dataset = {
@@ -27,4 +28,15 @@ export const datasetExemplo: Dataset = {
         criadoPor: "u-analista",
         criadoEm: "2026-11-21T10:00:00.000Z",
     },
+};
+
+export const vocabularioCid10: Vocabulario = {
+    id: "voc-cid10",
+    nome: "CID-10",
+    origem: "Amostra sintética de teste (não oficial)",
+    versao: "amostra-teste-1",
+    licenca: "Uso restrito aos testes acadêmicos",
+    hashArquivo: "c".repeat(64),
+    totalCodigos: 25,
+    importadoEm: "2026-11-20T08:00:00.000Z",
 };
