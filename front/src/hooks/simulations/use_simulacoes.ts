@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { diagnosticoKeys } from "@/hooks/diagnostics/use_diagnosticos";
 import * as simulacoesService from "@/services/simulations";
 
 export const simulacaoKeys = {
@@ -31,6 +32,7 @@ export function useSimular() {
     return useMutation({
         mutationFn: simulacoesService.simular,
         meta: { erroTratadoNaTela: true },
-        onSuccess: () => cliente.invalidateQueries({ queryKey: simulacaoKeys.all }),
+        onSuccess: () =>
+            Promise.all([cliente.invalidateQueries({ queryKey: simulacaoKeys.all }), cliente.invalidateQueries({ queryKey: diagnosticoKeys.all })]),
     });
 }
