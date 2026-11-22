@@ -13,11 +13,13 @@ import { DetailField, Section } from "@/components/layout/section";
 import { ErrorState, LoadingState } from "@/components/layout/states";
 import { StatusSimulacaoBadge } from "@/components/simulations/status_simulacao";
 import { useSimulacao } from "@/hooks/simulations/use_simulacoes";
+import { usePermissions } from "@/hooks/use_permissions";
 import type { ApiError } from "@/lib/api";
 import { formatDateTime } from "@/lib/moment";
 import type { Simulacao } from "@/types/simulations";
 import { PreviaAcoes } from "./previa_acoes";
 import { ResultadosRegras } from "./resultados_regras";
+import { TratamentoPainel } from "./tratamento_painel";
 
 function AvisoStatus({ simulacao }: { simulacao: Simulacao }) {
     const segundos = Math.round(simulacao.limiteMs / 1000);
@@ -66,6 +68,7 @@ function AvisoStatus({ simulacao }: { simulacao: Simulacao }) {
 }
 
 function Detalhe({ id }: { id: string }) {
+    const { can } = usePermissions();
     const consulta = useSimulacao(id);
     if (consulta.isPending) {
         return <LoadingState />;
@@ -129,6 +132,7 @@ function Detalhe({ id }: { id: string }) {
                     <Card titulo="Prévia das alterações" descricao="Até 20 linhas, com valores antes e depois das ações do catálogo.">
                         <PreviaAcoes previa={simulacao.previa} />
                     </Card>
+                    {can("TRATAMENTO_APLICAR") && <TratamentoPainel simulacao={simulacao} />}
                 </>
             )}
         </>
