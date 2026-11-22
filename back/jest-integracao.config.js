@@ -1,7 +1,7 @@
 /**
  * Testes de integração (CT001–CT007 e CTN aplicáveis), mantidos em /tests na raiz
  * do repositório, conforme a estrutura definida na P3 (seção 6.1).
- * Exigem PostgreSQL 16 acessível em TEST_DATABASE_URL (ver docker-compose.yml).
+ * Exigem PostgreSQL 16 acessível em TEST_DATABASE_URL (ver docker-compose.hml.yml).
  */
 const path = require('path');
 

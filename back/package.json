@@ -23,7 +23,8 @@
     "test": "jest --config jest.config.js",
     "test:cov": "jest --config jest.config.js --coverage",
     "test:integracao": "jest --config jest-integracao.config.js --runInBand",
-    "test:todos": "npm run test && npm run test:integracao"
+    "test:todos": "npm run test && npm run test:integracao",
+    "db:papeis": "ts-node --transpile-only src/cli/aplicar-papeis.ts"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",

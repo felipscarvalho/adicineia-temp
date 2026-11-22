@@ -68,7 +68,7 @@ comportamento fora do catálogo.
 A estrutura segue a seção 6.1 da P3:
 
 ```
-/README.md, /.gitignore, /.env.example, /docker-compose.yml
+/README.md, /.gitignore, /.env.example, /docker-compose.hml.yml (PostgreSQL de desenvolvimento e testes)
 /back/                 API NestJS (package.json, tsconfig, jest, eslint, prettier)
   src/auth/               F01, F02
   src/datasets/           F03, F04
@@ -478,7 +478,7 @@ Dependências de execução (versões exatas em `back/package.json` e `package-l
 
 Desenvolvimento: TypeScript 5.9.2, Jest 29.7.0, ts-jest 29.4.1, Supertest 7.1.4, ts-node 10.9.2,
 ESLint 9.35.0 com typescript-eslint 8.43.0, Prettier 3.6.2, @nestjs/cli 11.0.10, @nestjs/testing 11.1.6.
-Infraestrutura: Docker com `postgres:16-alpine` (`docker-compose.yml`), GitHub Actions
+Infraestrutura: Docker com `postgres:16-alpine` (`docker-compose.hml.yml`), GitHub Actions
 (`.github/workflows/backend.yml`, Node.js 22).
 
 ---

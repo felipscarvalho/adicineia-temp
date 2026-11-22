@@ -9,7 +9,7 @@ gabarito rotulado `atendimentos.gabarito.json`.
 ## Execução
 
 ```bash
-docker compose up -d                     # PostgreSQL 16 em localhost:55432 (raiz do repositório)
+docker compose -f ../docker-compose.hml.yml up -d  # PostgreSQL 16 em localhost:55432 (raiz do repositório)
 (cd ../back && npm ci && npm run build)  # API compilada em back/dist
 npm ci && npm run build                  # front compilado
 npx playwright install chromium          # ou defina CHROMIUM_PATH=/caminho/do/chromium

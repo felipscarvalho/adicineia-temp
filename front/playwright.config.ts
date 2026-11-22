@@ -4,7 +4,7 @@ import { AMBIENTE_E2E } from "./e2e/ambiente";
 
 /**
  * Teste ponta a ponta contra o backend real (back/dist) e o front compilado (next start).
- * Pré-requisitos: PostgreSQL 16 do docker-compose, `npm run build` em back/ e em front/.
+ * Pré-requisitos: PostgreSQL 16 do docker-compose.hml.yml, `npm run build` em back/ e em front/.
  * CHROMIUM_PATH permite usar o Chromium já instalado no sistema.
  */
 export default defineConfig({

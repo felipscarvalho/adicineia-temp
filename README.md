@@ -25,6 +25,9 @@ front está em [`front/README.md`](front/README.md).
 | `back/src/audit/` | Extratos de auditoria somente de inserção e PDF (RF006) |
 | `back/src/diagnostics/` | Diagnóstico de qualidade e exportação PDF/XLSX (RF005) |
 | `back/src/cli/` | Scripts de migração, contas de demonstração, vocabulário e limpeza de órfãos |
+| `deploy/` | Imagem do nginx, script do certbot e guia de implantação |
+| `docker-compose.yml` | Produção: banco, migração, back, front e nginx com HTTPS |
+| `docker-compose.hml.yml` | PostgreSQL 16 de desenvolvimento e testes |
 | `database/` | Migrações SQL do PostgreSQL 16 e script de papéis do banco |
 | `front/` | SPA em Next.js 16 + React 19 + Untitled UI (telas T00–T07) |
 | `front/e2e/` | Ensaio ponta a ponta com Playwright contra back e front reais |
@@ -40,7 +43,7 @@ front está em [`front/README.md`](front/README.md).
 ## Execução local
 
 ```bash
-docker compose up -d                          # PostgreSQL 16 em localhost:55432
+docker compose -f docker-compose.hml.yml up -d   # PostgreSQL 16 em localhost:55432
 cd back
 npm ci
 cp ../.env.example .env                       # ajuste URLs, senhas e diretório de armazenamento
@@ -71,6 +74,15 @@ A sessão usa cookie `HttpOnly`, `Secure` e `SameSite=Lax`. Navegadores aceitam 
 em `http://localhost`; fora disso, a API deve ser servida por HTTPS. Requisições que alteram estado
 exigem o cabeçalho `X-CSRF-Token` com o token devolvido em `/api/auth/entrar` ou `/api/auth/sessao`.
 
+## Produção
+
+```bash
+cp .env.producao.example .env      # senhas, domínio e e-mail do Let's Encrypt
+docker compose up -d --build       # banco, migração, back, front e nginx com HTTPS
+```
+
+Detalhes em [`deploy/README.md`](deploy/README.md).
+
 ## Testes e verificações
 
 ```bash
@@ -88,7 +100,7 @@ MSW), `npm run build` e `npm run test:e2e` (Playwright, ver `front/e2e/README.md
 
 Os testes de integração recriam o banco `dataqualisus_teste` a cada execução. Por padrão usam
 `postgres://dataqualisus:dataqualisus_dev@localhost:55432/dataqualisus_teste` (o contêiner do
-`docker-compose.yml`); para outro servidor, defina `TEST_DATABASE_URL`.
+`docker-compose.hml.yml`); para outro servidor, defina `TEST_DATABASE_URL`.
 
 ## Rotas da API (prefixo `/api`)
 

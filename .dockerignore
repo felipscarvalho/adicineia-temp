@@ -1,0 +1,14 @@
+# Contexto da imagem do backend (raiz do repositório)
+.git
+**/node_modules
+**/dist
+**/coverage
+**/.next
+**/test-results
+**/playwright-report
+**/armazenamento
+**/.env
+**/.env.*
+!**/.env.example
+front
+tests

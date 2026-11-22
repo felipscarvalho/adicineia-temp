@@ -1,16 +1,116 @@
-# Ambiente local de desenvolvimento e testes: PostgreSQL 16 (ADR-001).
+# Produção do DataQualiSUS: PostgreSQL 16, migração, API, SPA e nginx com HTTPS (Let's Encrypt).
+# Uso: cp .env.producao.example .env && docker compose up -d --build
+# Desenvolvimento e testes usam docker-compose.hml.yml.
+name: dataqualisus
+
+x-banco-dono: &banco-dono postgres://${POSTGRES_USER:-dataqualisus}:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dataqualisus}
+
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: dataqualisus_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: dataqualisus
-      POSTGRES_PASSWORD: dataqualisus_dev
-      POSTGRES_DB: dataqualisus
-    ports:
-      - '55432:5432'
+      POSTGRES_USER: ${POSTGRES_USER:-dataqualisus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-dataqualisus}
     volumes:
-      - dataqualisus_pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dataqualisus} -d ${POSTGRES_DB:-dataqualisus}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Execução única a cada subida: migrações, papel restrito da aplicação (ADR-006) e, se as senhas
+  # forem informadas, as contas de demonstração.
+  migracao:
+    build:
+      context: .
+      dockerfile: back/Dockerfile
+    image: dataqualisus-back:producao
+    command:
+      - sh
+      - -c
+      - >-
+        node dist/cli/migrar.js &&
+        node dist/cli/aplicar-papeis.js &&
+        if [ -n "$${SEED_SENHA_ANALISTA:-}" ]; then node dist/cli/seed-contas-demo.js; else echo "Contas de demonstração não alteradas."; fi
+    environment:
+      DATABASE_URL_MIGRACAO: *banco-dono
+      DATABASE_URL: *banco-dono
+      SENHA_BANCO_APP: ${SENHA_BANCO_APP:?defina SENHA_BANCO_APP}
+      BCRYPT_CUSTO: ${BCRYPT_CUSTO:-12}
+      SEED_SENHA_ANALISTA: ${SEED_SENHA_ANALISTA:-}
+      SEED_SENHA_GESTOR: ${SEED_SENHA_GESTOR:-}
+      SEED_SENHA_EQUIPE_TECNICA: ${SEED_SENHA_EQUIPE_TECNICA:-}
+    volumes:
+      - ./dados:/dados/importacao:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  back:
+    image: dataqualisus-back:producao
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://dataqualisus_app:${SENHA_BANCO_APP:?defina SENHA_BANCO_APP}@db:5432/${POSTGRES_DB:-dataqualisus}
+      CORS_ORIGEM: https://${DOMINIO:-es.felipscarvalho.com.br}
+      BCRYPT_CUSTO: ${BCRYPT_CUSTO:-12}
+      SESSAO_DURACAO_MINUTOS: ${SESSAO_DURACAO_MINUTOS:-480}
+      SIMULACAO_LIMITE_MS: ${SIMULACAO_LIMITE_MS:-60000}
+      SIMULACAO_POOL_TAMANHO: ${SIMULACAO_POOL_TAMANHO:-2}
+    volumes:
+      - armazenamento:/dados/armazenamento
+    depends_on:
+      migracao:
+        condition: service_completed_successfully
+
+  front:
+    build:
+      context: ./front
+    image: dataqualisus-front:producao
+    restart: unless-stopped
+    depends_on:
+      back:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: ./deploy/nginx
+    image: dataqualisus-nginx:producao
+    restart: unless-stopped
+    environment:
+      DOMINIO: ${DOMINIO:-es.felipscarvalho.com.br}
+    ports:
+      - "${PORTA_HTTP:-80}:80"
+      - "${PORTA_HTTPS:-443}:443"
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - acme:/var/www/certbot
+    depends_on:
+      front:
+        condition: service_healthy
+      back:
+        condition: service_healthy
+
+  certbot:
+    image: certbot/certbot:v3.1.0
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/scripts/certbot.sh"]
+    environment:
+      DOMINIO: ${DOMINIO:-es.felipscarvalho.com.br}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:-}
+      CERTBOT_STAGING: ${CERTBOT_STAGING:-0}
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - acme:/var/www/certbot
+      - ./deploy/certbot/certbot.sh:/scripts/certbot.sh:ro
+    depends_on:
+      - nginx
 
 volumes:
-  dataqualisus_pgdata:
+  pgdata:
+  armazenamento:
+  letsencrypt:
+  acme:

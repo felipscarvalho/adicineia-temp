@@ -8,6 +8,7 @@ coverage/
 .env
 .env.*
 !.env.example
+!.env.*.example
 
 # Armazenamento de arquivos CSV em execução (ADR-003): fica fora do controle de versão
 armazenamento/
@@ -18,3 +19,6 @@ back/armazenamento/
 .idea/
 .vscode/
 *.log
+
+# Arquivos de vocabulário oficial para importação no servidor
+/dados/
