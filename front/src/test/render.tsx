@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nProvider } from "react-aria-components";
+import { Toaster } from "@/components/feedback/toast";
 import { criarQueryClient } from "@/components/query_provider";
 import { useUserStore } from "@/stores/user_store";
 import type { Sessao } from "@/types/auth";
@@ -20,7 +21,10 @@ export function renderizar(ui: ReactElement, opcoes: { sessao?: Sessao | null } 
     cliente.setDefaultOptions({ queries: { retry: false }, mutations: { retry: false } });
     const Envoltorio = ({ children }: { children: ReactNode }) => (
         <QueryClientProvider client={cliente}>
-            <I18nProvider locale="pt-BR">{children}</I18nProvider>
+            <I18nProvider locale="pt-BR">
+                {children}
+                <Toaster />
+            </I18nProvider>
         </QueryClientProvider>
     );
     return { usuario: userEvent.setup(), cliente, ...render(ui, { wrapper: Envoltorio }) };
