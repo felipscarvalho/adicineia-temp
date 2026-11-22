@@ -3,9 +3,9 @@
  */
 import { readdir, readFile } from "fs/promises";
 import * as path from "path";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
-import { ArmazenamentoArquivosService } from "../../backend/src/datasets/armazenamento-arquivos.service";
-import { DatasetRepository } from "../../backend/src/datasets/dataset.repository";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
+import { ArmazenamentoArquivosService } from "../../back/src/datasets/armazenamento-arquivos.service";
+import { DatasetRepository } from "../../back/src/datasets/dataset.repository";
 import {
   ClienteApi,
   ContextoTeste,

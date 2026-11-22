@@ -4,7 +4,7 @@
  */
 import { readFile } from "fs/promises";
 import * as path from "path";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

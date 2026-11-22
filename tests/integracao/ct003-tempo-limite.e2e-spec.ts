@@ -3,7 +3,7 @@
  * aceite, a simulação é cancelada, marcada TEMPO_ESGOTADO e não pode ser aplicada.
  * O limite é reduzido por configuração para tornar o ensaio determinístico.
  */
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

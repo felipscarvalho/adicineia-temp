@@ -69,7 +69,7 @@ A estrutura segue a seção 6.1 da P3:
 
 ```
 /README.md, /.gitignore, /.env.example, /docker-compose.yml
-/backend/                 API NestJS (package.json, tsconfig, jest, eslint, prettier)
+/back/                 API NestJS (package.json, tsconfig, jest, eslint, prettier)
   src/auth/               F01, F02
   src/datasets/           F03, F04
   src/rules/              F06 (regras, conjuntos, motor/) e F05 (vocabularios/)
@@ -151,11 +151,11 @@ encerrada ou de usuário inativo é recusada com 401.
 **Requisitos atendidos.** RF007 (CA007/CT007), UC-08 (fluxos 2a, 4a), RNF003 (hash com salt
 aleatório; senhas iguais → hashes distintos), ADR-006 (sessão no servidor, cookie), D05.
 
-**Arquivos e classes.** `backend/src/auth/`: `AutenticacaoService`, `SenhaService`,
+**Arquivos e classes.** `back/src/auth/`: `AutenticacaoService`, `SenhaService`,
 `SessaoRepository`, `UsuarioRepository`, `AutenticacaoController` (`POST /auth/entrar`,
 `GET /auth/sessao`, `POST /auth/sair`), `cookie-sessao.ts`, `decoradores.ts` (`@Publica`,
 `@UsuarioAtual`), `dto/entrar.dto.ts`; `database/migrations/0001_autenticacao.sql`;
-`backend/src/cli/seed-contas-demo.ts` (`npm run db:seed`).
+`back/src/cli/seed-contas-demo.ts` (`npm run db:seed`).
 
 **Testes.** Unitários: `autenticacao.service.spec.ts` (11), `senha.service.spec.ts` (3).
 Integração: `tests/integracao/ct007-autenticacao.e2e-spec.ts` (10).
@@ -459,7 +459,7 @@ A6 e C5, risco RA05.
 
 ## 5. Tecnologias, bibliotecas e dependências
 
-Dependências de execução (versões exatas em `backend/package.json` e `package-lock.json`):
+Dependências de execução (versões exatas em `back/package.json` e `package-lock.json`):
 
 | Pacote | Versão | Uso |
 |--------|--------|-----|
@@ -511,7 +511,7 @@ Infraestrutura: Docker com `postgres:16-alpine` (`docker-compose.yml`), GitHub A
 
 ## 7. Testes
 
-### 7.1 Testes unitários (`backend/src/**/*.spec.ts`, sem banco)
+### 7.1 Testes unitários (`back/src/**/*.spec.ts`, sem banco)
 
 29 suítes, 319 casos. Distribuição por funcionalidade:
 
@@ -596,7 +596,7 @@ PostgreSQL 16. O resultado no GitHub **não foi verificado** nesta sessão (ver 
 Ambiente: Linux x86_64 (18 núcleos), Node.js v24.13.0 (o projeto exige Node.js ≥ 22; a ADR-001
 fixa Node.js 22 LTS, usado no CI), TypeScript 5.9.2, PostgreSQL 16.16 (`postgres:16-alpine`).
 
-| Verificação | Comando (em `backend/`) | Resultado |
+| Verificação | Comando (em `back/`) | Resultado |
 |-------------|-------------------------|-----------|
 | Formatação | `npm run format:check` | Todos os arquivos no padrão Prettier |
 | Análise estática | `npm run lint` | 0 erros, 0 avisos (src/ e tests/) |
@@ -665,7 +665,7 @@ precisaria de no máximo 100 bytes), então o pior caso de volume é limitado pe
 | P08 | Limitação de tentativas de login não especificada nos documentos e não implementada | Força bruta depende de controles de infraestrutura | `auth/autenticacao.service.ts` |
 | P09 | Trilha de auditoria cobre apenas o tratamento (RN03); importação, exclusão lógica e edição de regras ficam registradas nas próprias tabelas (autor e instante), não em extrato | Conforme RF006, que define extrato por tratamento | — |
 | P10 | O tratamento recalcula as ações na thread principal (não no worker) | Para arquivos no limite, o recálculo bloqueia a API por cerca de 1 s; a ADR-008 trata apenas da simulação | `treatments/tratamento.service.ts` |
-| P11 | Execução local em Node.js 24 (o CI usa Node.js 22 LTS, conforme ADR-001) | Compatibilidade com Node.js 22 depende da verificação do CI (P05) | `backend/package.json` (`engines`) |
+| P11 | Execução local em Node.js 24 (o CI usa Node.js 22 LTS, conforme ADR-001) | Compatibilidade com Node.js 22 depende da verificação do CI (P05) | `back/package.json` (`engines`) |
 | P12 | Restrição e documentação do acesso administrativo ao banco (Q04) | `papeis.sql` separa o usuário da aplicação do dono do esquema; a política administrativa da infraestrutura é procedimento da equipe | `database/papeis.sql`, `database/README.md` |
 | P13 | Datasets reais abertos e verificação de ausência de dados pessoais (D01, Q01) | Os testes usam apenas dados sintéticos rotulados; resultados não se generalizam para dados reais (OBJ06) | `tests/fixtures/` |
 
@@ -675,16 +675,16 @@ precisaria de no máximo 100 bytes), então o pior caso de volume é limitado pe
 
 | Funcionalidade | Requisitos | Decisões | Código principal | Testes | Commit |
 |----------------|-----------|----------|------------------|--------|--------|
-| F01 | RF007, RNF003, UC-08, D05 | ADR-006, DT05 | `backend/src/auth/autenticacao.service.ts` | `ct007-autenticacao`, `autenticacao.service.spec` | `769789c` |
-| F02 | RF007, RNF003, RNF005 | ADR-006, DT04 | `backend/src/auth/autorizacao.guard.ts`, `matriz-permissoes.ts` | `ctn003-autorizacao`, `autorizacao.guard.spec` | `84d6688` |
-| F03 | RF001, RN04, RNF001, RNF005 | ADR-003, ADR-004, DT06–DT08 | `backend/src/datasets/validador-csv.ts`, `armazenamento-arquivos.service.ts` | `ct001-importacao`, `validador-csv.spec` | `19c4adc` |
-| F04 | RF001, RN04 | ADR-005, MOD-15 | `backend/src/datasets/dataset.service.ts` | `ct001-manutencao`, `dataset-manutencao.spec` | `c96a4f9` |
-| F05 | RN02, D06 | ADR-009, MOD-13 | `backend/src/rules/vocabularios/` | `ct002-vocabularios`, `importador-vocabulario.spec` | `bb4caf9` |
-| F06 | RF002, RN01, RN02, RNF006 | ADR-002, ADR-005, DT09–DT12 | `backend/src/rules/motor/`, `regra.service.ts`, `conjunto.service.ts` | `ct002-regras`, `validacao-configuracao.spec` | `a646b7c` |
-| F07 | RF003, RN01, RN02, RN04, RNF001, RNF002 | ADR-008, MOD-12, MOD-16, DT13–DT14 | `backend/src/simulations/`, `rules/motor/motor-regras.ts` | `ct003-simulacao`, `ct003-tempo-limite`, `motor-regras.spec` | `966b95c` |
-| F08 | RF006, RN03, RN04 | ADR-004, ADR-006, ADR-007, DT16 | `backend/src/audit/`, `database/papeis.sql` | `ct006-auditoria`, `auditoria.service.spec` | `6ab5219` |
-| F09 | RF004, RN02, RN03, RN04, RNF001 | ADR-004, ADR-005, DT15–DT16 | `backend/src/treatments/tratamento.service.ts` | `ct004-tratamento`, `tratamento.service.spec` | `f372244` |
-| F10 | RF005, RN01, RN02, RNF005 | ADR-007, MOD-14, DT17–DT18 | `backend/src/diagnostics/` | `ct005-diagnostico`, `calculo-indicadores.spec` | `326fafb` |
+| F01 | RF007, RNF003, UC-08, D05 | ADR-006, DT05 | `back/src/auth/autenticacao.service.ts` | `ct007-autenticacao`, `autenticacao.service.spec` | `769789c` |
+| F02 | RF007, RNF003, RNF005 | ADR-006, DT04 | `back/src/auth/autorizacao.guard.ts`, `matriz-permissoes.ts` | `ctn003-autorizacao`, `autorizacao.guard.spec` | `84d6688` |
+| F03 | RF001, RN04, RNF001, RNF005 | ADR-003, ADR-004, DT06–DT08 | `back/src/datasets/validador-csv.ts`, `armazenamento-arquivos.service.ts` | `ct001-importacao`, `validador-csv.spec` | `19c4adc` |
+| F04 | RF001, RN04 | ADR-005, MOD-15 | `back/src/datasets/dataset.service.ts` | `ct001-manutencao`, `dataset-manutencao.spec` | `c96a4f9` |
+| F05 | RN02, D06 | ADR-009, MOD-13 | `back/src/rules/vocabularios/` | `ct002-vocabularios`, `importador-vocabulario.spec` | `bb4caf9` |
+| F06 | RF002, RN01, RN02, RNF006 | ADR-002, ADR-005, DT09–DT12 | `back/src/rules/motor/`, `regra.service.ts`, `conjunto.service.ts` | `ct002-regras`, `validacao-configuracao.spec` | `a646b7c` |
+| F07 | RF003, RN01, RN02, RN04, RNF001, RNF002 | ADR-008, MOD-12, MOD-16, DT13–DT14 | `back/src/simulations/`, `rules/motor/motor-regras.ts` | `ct003-simulacao`, `ct003-tempo-limite`, `motor-regras.spec` | `966b95c` |
+| F08 | RF006, RN03, RN04 | ADR-004, ADR-006, ADR-007, DT16 | `back/src/audit/`, `database/papeis.sql` | `ct006-auditoria`, `auditoria.service.spec` | `6ab5219` |
+| F09 | RF004, RN02, RN03, RN04, RNF001 | ADR-004, ADR-005, DT15–DT16 | `back/src/treatments/tratamento.service.ts` | `ct004-tratamento`, `tratamento.service.spec` | `f372244` |
+| F10 | RF005, RN01, RN02, RNF005 | ADR-007, MOD-14, DT17–DT18 | `back/src/diagnostics/` | `ct005-diagnostico`, `calculo-indicadores.spec` | `326fafb` |
 
 Cobertura dos RNF: RNF001 (CTN001 em `ct001-importacao`, `ct003-tempo-limite`, `ct004-tratamento`),
 RNF002 (CTN002 em `ct003-simulacao`), RNF003 (CTN003 em `ctn003-autorizacao` e `ct007-autenticacao`),

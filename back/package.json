@@ -11,7 +11,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"../tests/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"../tests/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\" && cd .. && backend/node_modules/.bin/eslint -c backend/eslint.config.mjs \"tests/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\" && cd .. && back/node_modules/.bin/eslint -c back/eslint.config.mjs \"tests/**/*.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "start": "nest start",
     "start:dev": "nest start --watch",

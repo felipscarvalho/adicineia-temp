@@ -3,7 +3,7 @@
  * percorrer importar → configurar → simular → aplicar → auditar → diagnosticar → sair, somente
  * pela API e com os três perfis.
  */
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

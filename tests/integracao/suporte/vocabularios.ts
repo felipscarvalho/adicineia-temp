@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import * as path from "path";
-import { VocabularioService } from "../../../backend/src/rules/vocabularios/vocabulario.service";
+import { VocabularioService } from "../../../back/src/rules/vocabularios/vocabulario.service";
 import { ContextoTeste } from "./aplicacao";
 
 export const ARQUIVO_CID10_AMOSTRA = path.resolve(

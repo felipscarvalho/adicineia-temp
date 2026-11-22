@@ -4,16 +4,16 @@ import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
 import * as path from "path";
 import request from "supertest";
-import { AppModule } from "../../../backend/src/app.module";
-import { configurarAplicacao } from "../../../backend/src/app.setup";
-import { PapelUsuario } from "../../../backend/src/auth/papel-usuario";
-import { SenhaService } from "../../../backend/src/auth/senha.service";
-import { UsuarioRepository } from "../../../backend/src/auth/usuario.repository";
+import { AppModule } from "../../../back/src/app.module";
+import { configurarAplicacao } from "../../../back/src/app.setup";
+import { PapelUsuario } from "../../../back/src/auth/papel-usuario";
+import { SenhaService } from "../../../back/src/auth/senha.service";
+import { UsuarioRepository } from "../../../back/src/auth/usuario.repository";
 import {
   CONFIGURACAO,
   Configuracao,
-} from "../../../backend/src/config/configuracao";
-import { DatabaseService } from "../../../backend/src/database/database.service";
+} from "../../../back/src/config/configuracao";
+import { DatabaseService } from "../../../back/src/database/database.service";
 
 export const SENHA_PADRAO = "senha-de-teste-123";
 

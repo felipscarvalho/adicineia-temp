@@ -2,7 +2,7 @@
  * CT005 — Indicadores e diagnóstico (RF005, RN01, UC-07, ADR-007) e CTN005 — exportação inerte.
  */
 import ExcelJS from "exceljs";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

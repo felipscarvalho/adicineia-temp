@@ -11,7 +11,7 @@ coverage/
 
 # Armazenamento de arquivos CSV em execução (ADR-003): fica fora do controle de versão
 armazenamento/
-backend/armazenamento/
+back/armazenamento/
 
 # Sistema e editores
 .DS_Store

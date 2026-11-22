@@ -2,7 +2,7 @@
  * CT007 — Autenticação e sessão (RF007, UC-08, ADR-006) e parte de CTN003 (armazenamento de senhas).
  */
 import request from "supertest";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

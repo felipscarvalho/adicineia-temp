@@ -4,13 +4,13 @@
  */
 import { readdir, readFile } from "fs/promises";
 import * as path from "path";
-import { AuditoriaRepository } from "../../backend/src/audit/auditoria.repository";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
-import { ArmazenamentoArquivosService } from "../../backend/src/datasets/armazenamento-arquivos.service";
-import { DatasetRepository } from "../../backend/src/datasets/dataset.repository";
-import { lerCsv } from "../../backend/src/datasets/leitor-csv";
-import { VersionamentoService } from "../../backend/src/datasets/versionamento.service";
-import { SimulacaoRepository } from "../../backend/src/simulations/simulacao.repository";
+import { AuditoriaRepository } from "../../back/src/audit/auditoria.repository";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
+import { ArmazenamentoArquivosService } from "../../back/src/datasets/armazenamento-arquivos.service";
+import { DatasetRepository } from "../../back/src/datasets/dataset.repository";
+import { lerCsv } from "../../back/src/datasets/leitor-csv";
+import { VersionamentoService } from "../../back/src/datasets/versionamento.service";
+import { SimulacaoRepository } from "../../back/src/simulations/simulacao.repository";
 import {
   ClienteApi,
   ContextoTeste,

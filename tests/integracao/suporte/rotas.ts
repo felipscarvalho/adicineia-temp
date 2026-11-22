@@ -4,8 +4,8 @@ import { ModulesContainer } from "@nestjs/core";
 import {
   CHAVE_OPERACAO,
   CHAVE_ROTA_PUBLICA,
-} from "../../../backend/src/auth/decoradores";
-import { Operacao } from "../../../backend/src/auth/matriz-permissoes";
+} from "../../../back/src/auth/decoradores";
+import { Operacao } from "../../../back/src/auth/matriz-permissoes";
 
 export interface RotaDescoberta {
   metodo: "get" | "post" | "put" | "patch" | "delete";

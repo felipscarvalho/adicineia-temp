@@ -1,5 +1,5 @@
 # Integração contínua do backend (P3, seção 9): lint, compilação e testes unitários e de integração.
-name: backend
+name: back
 
 on:
   push:
@@ -25,14 +25,14 @@ jobs:
           --health-retries 10
     defaults:
       run:
-        working-directory: backend
+        working-directory: back
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: back/package-lock.json
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint

@@ -5,8 +5,8 @@
  * automaticamente.
  */
 import request from "supertest";
-import { MATRIZ_PERMISSOES } from "../../backend/src/auth/matriz-permissoes";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { MATRIZ_PERMISSOES } from "../../back/src/auth/matriz-permissoes";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

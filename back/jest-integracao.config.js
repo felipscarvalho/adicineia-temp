@@ -26,7 +26,7 @@ module.exports = {
   },
   globalSetup: '<rootDir>/tests/integracao/suporte/preparar-banco.ts',
   testTimeout: 60000,
-  collectCoverageFrom: ['<rootDir>/backend/src/**/*.ts', '!**/*.spec.ts', '!**/main.ts', '!**/cli/**', '!**/__testes__/**'],
-  coverageDirectory: '<rootDir>/backend/coverage/integracao',
+  collectCoverageFrom: ['<rootDir>/back/src/**/*.ts', '!**/*.spec.ts', '!**/main.ts', '!**/cli/**', '!**/__testes__/**'],
+  coverageDirectory: '<rootDir>/back/coverage/integracao',
   coverageReporters: ['text-summary', 'lcov'],
 };

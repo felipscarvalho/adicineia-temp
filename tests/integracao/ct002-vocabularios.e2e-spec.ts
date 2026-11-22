@@ -1,8 +1,8 @@
 /*
  * CT002 (vocabulários) — RN02, ADR-009: importação versionada pela equipe e consulta pelo analista.
  */
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
-import { VocabularioService } from "../../backend/src/rules/vocabularios/vocabulario.service";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
+import { VocabularioService } from "../../back/src/rules/vocabularios/vocabulario.service";
 import {
   ClienteApi,
   ContextoTeste,

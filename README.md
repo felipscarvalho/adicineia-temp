@@ -13,15 +13,15 @@ arquitetura); a organização segue a seção 6.1 da P3. O relatório técnico d
 
 | Diretório | Conteúdo |
 |-----------|----------|
-| `backend/` | API em Node.js 22 + NestJS + TypeScript (ADR-001) |
-| `backend/src/auth/` | Autenticação, sessões, matriz perfil × operação e CSRF (RF007) |
-| `backend/src/datasets/` | Validação de CSV, armazenamento imutável, versões e exclusão lógica (RF001) |
-| `backend/src/rules/` | Regras, conjuntos, revisões, motor de regras e vocabulários (RF002) |
-| `backend/src/simulations/` | Simulação com limite de 60 s em worker threads (RF003) |
-| `backend/src/treatments/` | Aplicação transacional dos tratamentos (RF004) |
-| `backend/src/audit/` | Extratos de auditoria somente de inserção e PDF (RF006) |
-| `backend/src/diagnostics/` | Diagnóstico de qualidade e exportação PDF/XLSX (RF005) |
-| `backend/src/cli/` | Scripts de migração, contas de demonstração, vocabulário e limpeza de órfãos |
+| `back/` | API em Node.js 22 + NestJS + TypeScript (ADR-001) |
+| `back/src/auth/` | Autenticação, sessões, matriz perfil × operação e CSRF (RF007) |
+| `back/src/datasets/` | Validação de CSV, armazenamento imutável, versões e exclusão lógica (RF001) |
+| `back/src/rules/` | Regras, conjuntos, revisões, motor de regras e vocabulários (RF002) |
+| `back/src/simulations/` | Simulação com limite de 60 s em worker threads (RF003) |
+| `back/src/treatments/` | Aplicação transacional dos tratamentos (RF004) |
+| `back/src/audit/` | Extratos de auditoria somente de inserção e PDF (RF006) |
+| `back/src/diagnostics/` | Diagnóstico de qualidade e exportação PDF/XLSX (RF005) |
+| `back/src/cli/` | Scripts de migração, contas de demonstração, vocabulário e limpeza de órfãos |
 | `database/` | Migrações SQL do PostgreSQL 16 e script de papéis do banco |
 | `tests/integracao/` | Testes de integração (CT001–CT007 e CTN aplicáveis) |
 | `tests/fixtures/` | Datasets sintéticos com gabaritos por linha e regra e amostra de vocabulário |
@@ -36,7 +36,7 @@ arquitetura); a organização segue a seção 6.1 da P3. O relatório técnico d
 
 ```bash
 docker compose up -d                          # PostgreSQL 16 em localhost:55432
-cd backend
+cd back
 npm ci
 cp ../.env.example .env                       # ajuste URLs, senhas e diretório de armazenamento
 npm run db:migrar                             # aplica database/migrations (usa DATABASE_URL_MIGRACAO)
@@ -57,7 +57,7 @@ exigem o cabeçalho `X-CSRF-Token` com o token devolvido em `/api/auth/entrar` o
 ## Testes e verificações
 
 ```bash
-cd backend
+cd back
 npm run format:check      # Prettier
 npm run lint              # ESLint (src/ e ../tests/)
 npm run typecheck         # TypeScript em modo estrito

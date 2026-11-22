@@ -3,7 +3,7 @@
  * aplica as migrações versionadas em /database/migrations.
  */
 import { Client } from "pg";
-import { aplicarMigracoes } from "../../../backend/src/database/migrador";
+import { aplicarMigracoes } from "../../../back/src/database/migrador";
 
 export const URL_BANCO_TESTE =
   process.env.TEST_DATABASE_URL ??

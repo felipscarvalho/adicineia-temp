@@ -1,7 +1,7 @@
 /*
  * CT002 — Regras e conjuntos (RF002, RN01, RN02, ADR-002/ADR-005/ADR-009).
  */
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
 import {
   ClienteApi,
   ContextoTeste,

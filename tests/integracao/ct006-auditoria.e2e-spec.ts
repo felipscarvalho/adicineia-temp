@@ -7,10 +7,10 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { Client } from "pg";
 import request from "supertest";
-import { AuditoriaService } from "../../backend/src/audit/auditoria.service";
-import { PapelUsuario } from "../../backend/src/auth/papel-usuario";
-import { TipoAlteracao } from "../../backend/src/rules/motor/motor-regras";
-import { TipoAcao } from "../../backend/src/rules/motor/tipos";
+import { AuditoriaService } from "../../back/src/audit/auditoria.service";
+import { PapelUsuario } from "../../back/src/auth/papel-usuario";
+import { TipoAlteracao } from "../../back/src/rules/motor/motor-regras";
+import { TipoAcao } from "../../back/src/rules/motor/tipos";
 import {
   ClienteApi,
   ContextoTeste,

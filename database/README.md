@@ -1,7 +1,7 @@
 # Banco de dados (PostgreSQL 16)
 
 As migrações ficam em `migrations/` e são aplicadas em ordem pelo comando `npm run db:migrar`
-(executado em `backend/`), que registra cada arquivo aplicado na tabela `schema_migracoes`.
+(executado em `back/`), que registra cada arquivo aplicado na tabela `schema_migracoes`.
 
 | Migração | Funcionalidade | Tabelas |
 |----------|----------------|---------|
