@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const BraintreeIcon = (props: SVGProps<SVGSVGElement>) => {

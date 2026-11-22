@@ -18,16 +18,7 @@ export function ListToolbar({
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div className="flex flex-wrap items-end gap-3">{filtros}</div>
             {aoBuscar && (
-                <Input
-                    aria-label={placeholder}
-                    placeholder={placeholder}
-                    icon={SearchLg}
-                    value={busca}
-                    onChange={aoBuscar}
-                    className="md:w-72"
-                    inputClassName="glass-field"
-                    size="sm"
-                />
+                <Input aria-label={placeholder} placeholder={placeholder} icon={SearchLg} value={busca} onChange={aoBuscar} className="md:w-72" size="sm" />
             )}
         </div>
     );

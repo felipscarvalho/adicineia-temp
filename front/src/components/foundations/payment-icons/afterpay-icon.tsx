@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const AfterpayIcon = (props: SVGProps<SVGSVGElement>) => {

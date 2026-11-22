@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Container, HelpCircle, LayersTwo01, LogOut01, Moon01, Settings01, User01 } from "@untitledui/icons";
 import type { Selection } from "react-aria-components";

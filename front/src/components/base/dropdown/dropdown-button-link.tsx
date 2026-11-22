@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { ChevronDown, Trash01 } from "@untitledui/icons";
 import { Button as AriaButton } from "react-aria-components";

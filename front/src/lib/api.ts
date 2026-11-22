@@ -8,7 +8,7 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
  * estado, o cabeçalho `X-CSRF-Token` recebido na entrada/revalidação da sessão.
  */
 export const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL ?? "/api",
+    baseURL: import.meta.env.VITE_API_URL || "/api",
     withCredentials: true,
     headers: { Accept: "application/json" },
 });

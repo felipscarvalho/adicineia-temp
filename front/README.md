@@ -1,7 +1,7 @@
 # Arquitetura do frontend (`front/`)
 
-Interface web (SPA) do DataQualiSUS, em Next.js 16 (App Router) + React 19 + TypeScript. Consome a
-API de `back/` e implementa as telas T00–T07 da P2. As regras de negócio, permissões e cálculos
+Interface web do DataQualiSUS: SPA em React 19 + TypeScript (ADR-001), compilada pelo Vite e com
+rotas no navegador pelo React Router. Consome a API de `back/` e implementa as telas T00–T07 da P2. As regras de negócio, permissões e cálculos
 continuam no backend (P2, visão de contêineres): o front apresenta dados e coleta comandos.
 
 ## 1. Stack
@@ -10,12 +10,13 @@ continuam no backend (P2, visão de contêineres): o front apresenta dados e col
 * HTTP: axios, encapsulado em um client único
 * Dados do servidor: TanStack Query (cache, revalidação, mutations)
 * Estado global do cliente: Zustand
-* Identidade visual: segue o padrão SimMAP (aplicações da LAWD). Cores, fontes (MuseoModerno/JetBrains Mono), fundo com brilhos coloridos (sem grade) e scrollbar ficam em `styles/lawd-theme.css`, que sobrescreve as paletas `brand` e `neutral` do Untitled UI; não editar `styles/theme.css`. Usar sempre os tokens semânticos (`bg-primary`, `text-secondary`, `border-secondary`...) para funcionar nos dois modos. As formas (raios, tamanhos, pílulas) seguem o Untitled UI; do SimMAP vêm só cores, transparências e efeitos. Glassmorphism via utilitários de `lawd-theme.css`: `glass` (cards), `glass-strong` (menus, popovers, modal, toast), `glass-field` (campos), `glass-control` (botões secundários) e `glass-brand` / `glass-destructive` (botões primário e destrutivo); a borda vem do `ring-*` do componente. Desempenho: só `glass` e `glass-strong` usam `backdrop-filter` (vidro dentro de vidro não desfoca de novo); não adicionar `backdrop-blur` em elementos pequenos ou repetidos
-* Light/dark mode: `next-themes` em `components/providers.tsx` (classes `light-mode`/`dark-mode` do Untitled UI, padrão dark); alternância com `ThemeToggle` de `components/theme/theme_toggle.tsx`
+* Identidade visual: padrão do Untitled UI, sem tema próprio. Cores, fontes (Inter) e tokens vêm de `styles/theme.css` como o CLI entrega; usar sempre os tokens semânticos (`bg-primary`, `text-secondary`, `ring-secondary`...) para funcionar nos dois modos. Superfícies seguem o padrão dos componentes: `bg-primary` com `ring-1 ring-secondary` e `shadow-xs`
+* Light/dark mode: `ThemeProvider` do Untitled UI em `providers/theme-provider.tsx` (classes `light-mode`/`dark-mode`, padrão: o do sistema); alternância com `ThemeToggle` de `components/theme/theme_toggle.tsx`. O `index.html` aplica o tema salvo antes da primeira pintura
+* Rotas: React Router, declaradas em `app.tsx`; `providers/router-provider.tsx` liga a navegação dos componentes do react-aria ao roteador
 * Alert e toast: componentes próprios em `components/feedback/` (os do Untitled UI são PRO). Toasts sempre via `toast` de `@/components/feedback/toast`, nunca importando `sonner` diretamente
 * Estilos: só classes Tailwind; não usar módulos CSS (`*.module.css`)
 * Ícones: somente `@untitledui/icons` (mesma biblioteca usada internamente pelos componentes); não adicionar outras bibliotecas de ícones
-* Datas: moment, sempre importado de `@/lib/moment` (já configura o locale `pt-br`); exibição no formato `DD/MM/YYYY` via `formatDate` (`formatDateTime` para instantes). Componentes do react-aria usam o locale `pt-BR` do `I18nProvider` em `components/providers.tsx`
+* Datas: moment, sempre importado de `@/lib/moment` (já configura o locale `pt-br`); exibição no formato `DD/MM/YYYY` via `formatDate` (`formatDateTime` para instantes). Componentes do react-aria usam o locale `pt-BR` do `I18nProvider` em `main.tsx`
 * Formulários: react-hook-form
 * Validação: Zod (integrado ao react-hook-form via `zodResolver` de `@hookform/resolvers`)
 * Testes: Vitest + Testing Library + MSW (componentes, hooks e services contra uma API simulada) e Playwright (fluxo ponta a ponta contra o backend real)
@@ -28,7 +29,7 @@ Fluxo: Componente → Hook (TanStack Query) → Service → API client → backe
 
 Instância única de axios, configurada uma vez:
 
-* `baseURL` vinda de `NEXT_PUBLIC_API_URL` (padrão `/api`). O `next.config.ts` encaminha `/api/*` para o backend (`API_PROXY_URL`), então SPA e API ficam no mesmo domínio
+* `baseURL` vinda de `VITE_API_URL` (padrão `/api`). Em desenvolvimento e no `vite preview`, o `vite.config.ts` encaminha `/api/*` ao backend (`API_PROXY_URL`); em produção, o nginx de `deploy/` faz o mesmo. SPA e API ficam no mesmo domínio
 * Autenticação por sessão no servidor (ADR-006): o cookie `HttpOnly`/`Secure`/`SameSite=Lax` vai em todas as requisições (`withCredentials`); o interceptor de request acrescenta `X-CSRF-Token` nos métodos que alteram estado
 * Interceptor de response normaliza qualquer erro em `ApiError` (`status`, `codigo`, `message`, `detalhes`/`errosDeCampo`), no formato `{ statusCode, erro, mensagem, detalhes }` do backend; em 401 limpa a sessão e volta para `/login`
 * É o único arquivo do front que importa `axios`
@@ -50,7 +51,7 @@ Camada fina de TanStack Query sobre os services; é por ela que componentes cons
 * Query keys centralizadas por recurso (ex.: `datasetKeys.all`, `datasetKeys.detail(id)`), nunca escritas como literal solto nos componentes
 * Toda mutation invalida (`invalidateQueries`) as keys afetadas no `onSuccess`
 * Cache apenas em memória, com as opções padrão; a única exceção é o `refetchInterval` da simulação em execução (a SPA consulta o estado, ADR-008)
-* `QueryClientProvider` configurado uma vez no layout raiz
+* `QueryClientProvider` configurado uma vez em `main.tsx`
 
 ### Tipos (`types/<module>/`)
 
@@ -66,10 +67,10 @@ Tipos das respostas e payloads da API, espelhando os DTOs do backend.
 ### Área logada e autenticação
 
 * A sessão é o cookie HttpOnly do backend, invisível ao JavaScript; por isso o `user_store` não persiste nada no `localStorage`: a cada carga, `revalidate()` chama `GET /auth/sessao` e recupera usuário, permissões (`permissoes`, derivadas da matriz perfil × operação do backend) e token CSRF
-* Páginas autenticadas ficam no route group `app/(app)/`, cujo layout (`AppShell`) só monta no navegador (`ClientOnly`), redireciona sem sessão, revalida o usuário e monta a sidebar filtrada por permissão. A sidebar é dividida em seções por módulo (`components/navigation/navegacao.ts`): tela nova entra na seção do seu módulo, com a operação exigida
-* Toda página nova em `app/(app)/` exporta `export const instant = false` (exige `cacheComponents: true` no `next.config.ts`). O `page.tsx` é um server component que só declara a configuração e o `metadata` e renderiza a tela cliente de `_components/` (`<Nome>Tela`), que lê parâmetros com `useParams`
+* Páginas autenticadas são rotas filhas do `AppShell` em `app.tsx` (rota de layout com `<Outlet />`): ele revalida o usuário, redireciona sem sessão e monta a sidebar filtrada por permissão. A sidebar é dividida em seções por módulo (`components/navigation/navegacao.ts`): tela nova entra na seção do seu módulo, com a operação exigida
+* Cada tela fica em `pages/<rota>/_components/<nome>_tela.tsx` (`<Nome>Tela`), lê parâmetros com `useParams` e entra em `app.tsx` com `lazy` (um pacote por rota) e o título da aba via `TituloPagina`. Detalhes de um registro ficam em `pages/<rota>/detalhe/`
 * Botões e ações aparecem só com a permissão necessária (`usePermissions().can/canAnywhere`); telas inteiras usam `PermissionGate`. O backend continua sendo quem garante
-* Logout usa `window.location.href` (recarga completa), porque o Next mantém rotas montadas em segundo plano
+* Logout usa `window.location.href` (recarga completa), para descartar o cache do TanStack Query do usuário anterior
 
 ## 4. Componentes
 
@@ -84,22 +85,22 @@ Tipos das respostas e payloads da API, espelhando os DTOs do backend.
 Os componentes base não podem ser modificados sem permissão direta e explícita, mesmo para correções, ajustes de estilo, refatorações ou tradução de textos. Isso vale para:
 
 * Tudo em `components/base/`, `components/application/`, `components/foundations/` e `components/shared-assets/` (Untitled UI)
-* Componentes próprios: `components/feedback/`, `components/navigation/`, `components/brand/`, `components/theme/` e `components/providers.tsx`
-* Estilos globais: `styles/theme.css`, `styles/lawd-theme.css`, `styles/globals.css`
+* Provedores do Untitled UI em `providers/` e componentes próprios: `components/feedback/`, `components/navigation/`, `components/brand/` e `components/theme/`
+* Estilos globais: `styles/theme.css`, `styles/typography.css`, `styles/globals.css`
 
 Se uma tarefa parecer exigir mudança nesses arquivos, parar e pedir autorização descrevendo a alteração. Telas devem usar os componentes como estão, ajustando apenas via props e `className` no local de uso. Adicionar um componente novo do Untitled UI (via CLI) também precisa de autorização.
 
 ### Componentes de tela compartilhados (não congelados)
 
-* `components/layout/`: `PageHeader`, `Card`/`SplitCard`, `Section`/`DetailField`/`DetailTags`, `LoadingState`/`ErrorState`/`EmptyState`, `ListToolbar`, `ListContent`, `ListPagination`, `FormActions`, `PermissionGate`, `ClientOnly` e `AppShell`
+* `components/layout/`: `PageHeader`, `Card`/`SplitCard`, `Section`/`DetailField`/`DetailTags`, `LoadingState`/`ErrorState`/`EmptyState`, `ListToolbar`, `ListContent`, `ListPagination`, `FormActions`, `PermissionGate`, `TituloPagina` e `AppShell`
 * `components/forms/`: `FormInput`, `FormTextArea` e `FormSelect`, campos já ligados ao react-hook-form (valor, validação e erro no lugar da dica)
 * `components/overlays/`: `FormModal` (formulário em modal) e `ConfirmModal` (confirmação de ação)
 * `components/<module>/`: componentes de um módulo usados em mais de uma página (ex.: `components/rules/`, `components/datasets/`)
-* `components/query_provider.tsx`: `QueryClientProvider` do TanStack Query, aplicado no layout raiz
+* `components/query_provider.tsx`: `QueryClientProvider` do TanStack Query, aplicado em `main.tsx`
 
-### Locais (`app/<route>/_components/`)
+### Locais (`pages/<rota>/_components/`)
 
-* Componentes usados apenas por uma página ficam junto dela em `_components/` (pasta privada do Next)
+* Componentes usados apenas por uma página ficam junto dela em `_components/`
 * Componente local que passa a ser usado por outra página é promovido para `components/`
 
 ## 5. Formulários e validação
@@ -119,10 +120,11 @@ cd front
 npm ci
 cp .env.example .env.local
 npm run dev            # http://localhost:3001 (o backend deve estar em API_PROXY_URL)
-npm run lint           # ESLint (eslint-config-next)
+npm run preview        # serve o build (dist/) em :3001, com o mesmo encaminhamento de /api
+npm run lint           # ESLint (typescript-eslint e regras de hooks do React)
 npm run typecheck      # TypeScript
 npm test               # Vitest + Testing Library + MSW
-npm run build          # build de produção
+npm run build          # build de produção em dist/ (arquivos estáticos)
 npm run test:e2e       # Playwright contra back + front em execução (ver e2e/README)
 ```
 
@@ -131,9 +133,10 @@ npm run test:e2e       # Playwright contra back + front em execução (ver e2e/R
 | Padrão de referência | Adaptação no DataQualiSUS | Motivo |
 |----------------------|---------------------------|--------|
 | Token Bearer no `localStorage` | Cookie de sessão HttpOnly + `X-CSRF-Token`; store sem persistência | ADR-006 (sessão no servidor, revogável no logout) |
-| `NEXT_PUBLIC_API_URL` → `/api/v1` | `/api`, encaminhado pelo Next ao backend | Rotas do backend usam o prefixo `/api` |
+| `NEXT_PUBLIC_API_URL` → `/api/v1` | `VITE_API_URL` = `/api`, encaminhado pelo Vite (dev) e pelo nginx (produção) | SPA compilada pelo Vite; rotas do backend usam o prefixo `/api` |
+| Next.js (App Router, `page.tsx` + `instant`) | Vite + React Router, rotas em `app.tsx` e telas em `pages/` | ADR-001 define SPA em React; não há renderização no servidor |
 | Validação no backend com VineJS | class-validator e validação do catálogo de regras | Pilha da ADR-001 |
-| `use(browser())` + `Suspense` | `ClientOnly` com `useSyncExternalStore` | Mesmo efeito (área logada só no navegador) sem promessa pendente no servidor |
 | Escopos por instituição em `canAnywhere` | `canAnywhere` = alguma das operações | Não há isolamento por instituição (P1, seção 8.3) |
 | `components/administration/` | Componentes por módulo (`components/datasets/`, `components/rules/`...) | Módulos do DataQualiSUS |
-| Arquivos de tema do SimMAP | `lawd-theme.css` reconstruído com o mesmo contrato (paletas, fontes, vidro) | Os arquivos originais do SimMAP não estavam disponíveis neste repositório |
+| Tema SimMAP (`lawd-theme.css`, glassmorphism) | Tema padrão do Untitled UI | Identidade visual padrão da biblioteca adotada pelo grupo |
+| `next-themes` | `ThemeProvider` do kit Vite do Untitled UI | Sem dependência do Next |

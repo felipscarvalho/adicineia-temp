@@ -1,5 +1,3 @@
-"use client";
-
 import { cx } from "@/utils/cx";
 import type { NavItemDividerType, NavItemType } from "../config";
 import { NavItemBase } from "./nav-item";

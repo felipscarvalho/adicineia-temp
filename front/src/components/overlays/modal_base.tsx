@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { XClose } from "@untitledui/icons";
 import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
@@ -24,7 +22,7 @@ export function ModalBase({
 }) {
     return (
         <ModalOverlay isOpen={isOpen} onOpenChange={(aberto) => !aberto && aoFechar()} isDismissable>
-            <Modal className={cx("glass-strong ring-1 ring-secondary", largura)}>
+            <Modal className={cx("ring-1 ring-secondary", largura)}>
                 <Dialog aria-label={titulo}>
                     <div className="flex w-full flex-col gap-5 p-5 sm:p-6">
                         <div className="flex items-start justify-between gap-4">

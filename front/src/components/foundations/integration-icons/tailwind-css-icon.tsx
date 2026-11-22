@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const TailwindCSSIcon = ({ grayscale, ...props }: SVGProps<SVGSVGElement> & { grayscale?: boolean }) => {

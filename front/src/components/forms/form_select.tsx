@@ -1,5 +1,3 @@
-"use client";
-
 import { type Control, type FieldPath, type FieldValues, useController } from "react-hook-form";
 import { Select } from "@/components/base/select/select";
 import type { SelectItemType } from "@/components/base/select/select-shared";

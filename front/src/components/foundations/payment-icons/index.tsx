@@ -1,5 +1,3 @@
-"use client";
-
 export { default as AffirmIcon } from "./affirm-icon";
 export { default as AfterpayIcon } from "./afterpay-icon";
 export { default as AlipayIcon } from "./alipay-icon";

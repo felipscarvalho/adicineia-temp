@@ -1,5 +1,3 @@
-"use client";
-
 import type { Key, KeyboardEvent, ReactNode } from "react";
 import { useCallback, useRef, useState } from "react";
 import { HelpCircle, InfoCircle } from "@untitledui/icons";

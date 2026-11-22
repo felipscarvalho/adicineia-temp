@@ -1,5 +1,3 @@
-"use client";
-
 export { default as BoltIcon } from "./bolt-icon";
 export { default as ChatGPTIcon } from "./chatgpt-icon";
 export { default as ClaudeIcon } from "./claude-icon";

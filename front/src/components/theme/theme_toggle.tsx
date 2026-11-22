@@ -1,13 +1,15 @@
-"use client";
-
 import { Moon01, Sun } from "@untitledui/icons";
-import { useTheme } from "next-themes";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { useTheme } from "@/providers/theme-provider";
 
-/** Alterna entre os modos claro e escuro (padrão escuro). */
+function modoEscuroAtivo(): boolean {
+    return document.documentElement.classList.contains("dark-mode");
+}
+
+/** Alterna entre os modos claro e escuro (padrão: o do sistema). */
 export function ThemeToggle() {
-    const { resolvedTheme, setTheme } = useTheme();
-    const escuro = resolvedTheme !== "light";
+    const { theme, setTheme } = useTheme();
+    const escuro = theme === "dark" || (theme === "system" && modoEscuroAtivo());
     return (
         <ButtonUtility
             size="sm"

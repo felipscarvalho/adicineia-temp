@@ -1,5 +1,3 @@
-"use client";
-
 import type { RefAttributes } from "react";
 import { XClose } from "@untitledui/icons";
 import { Button as AriaButton, type ButtonProps as AriaButtonProps } from "react-aria-components";

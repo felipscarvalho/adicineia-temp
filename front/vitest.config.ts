@@ -4,10 +4,10 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
     plugins: [react()],
-    resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+    resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
     test: {
         environment: "jsdom",
-        environmentOptions: { jsdom: { url: "http://localhost:3000" } },
+        environmentOptions: { jsdom: { url: "http://localhost:3001" } },
         globals: true,
         setupFiles: ["./src/test/setup.ts"],
         include: ["src/**/*.test.{ts,tsx}"],
@@ -22,9 +22,11 @@ export default defineConfig({
                 "src/components/foundations/**",
                 "src/components/shared-assets/**",
                 "src/components/marketing/**",
+                "src/providers/**",
                 "src/utils/**",
                 "src/hooks/use-*.ts",
                 "src/test/**",
+                "src/main.tsx",
                 "src/**/*.test.{ts,tsx}",
             ],
         },

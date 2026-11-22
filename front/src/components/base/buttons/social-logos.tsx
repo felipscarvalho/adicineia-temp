@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 export const GoogleLogo = ({ colorful, ...props }: SVGProps<SVGSVGElement> & { colorful?: boolean }) => {

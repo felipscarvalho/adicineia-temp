@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const CursorIcon = ({ grayscale, ...props }: SVGProps<SVGSVGElement> & { grayscale?: boolean }) => {

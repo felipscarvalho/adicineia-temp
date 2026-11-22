@@ -15,7 +15,7 @@ const estilos: Record<Variante, { icone: typeof InfoCircle; caixa: string; cor: 
 export function Alert({ variante = "info", titulo, children, className }: { variante?: Variante; titulo: string; children?: ReactNode; className?: string }) {
     const { icone: Icone, caixa, cor } = estilos[variante];
     return (
-        <div role={variante === "erro" ? "alert" : "status"} className={cx("flex gap-3 rounded-xl glass p-4 ring-1", caixa, className)}>
+        <div role={variante === "erro" ? "alert" : "status"} className={cx("flex gap-3 rounded-xl bg-primary p-4 ring-1", caixa, className)}>
             <Icone className={cx("mt-0.5 size-5 shrink-0", cor)} />
             <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold text-primary">{titulo}</p>

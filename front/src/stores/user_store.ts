@@ -41,8 +41,7 @@ export const useUserStore = create<UserState>((set, get) => ({
             await authService.sair();
         } finally {
             get().clear();
-            // Recarga completa: o Next mantém rotas montadas em segundo plano.
-            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+            // Recarga completa: descarta o cache do TanStack Query do usuário anterior.
             window.location.href = "/login";
         }
     },
@@ -77,9 +76,8 @@ configurarSessao({
     obterCsrf: () => useUserStore.getState().csrfToken,
     aoPerderSessao: () => {
         useUserStore.getState().clear();
-        if (typeof window !== "undefined" && window.location.pathname !== "/login") {
-            // Sessão perdida (401): recarga completa para descartar o cache e as rotas montadas.
-            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        if (window.location.pathname !== "/login") {
+            // Sessão perdida (401): recarga completa para descartar o cache.
             window.location.href = "/login";
         }
     },

@@ -1,5 +1,3 @@
-"use client";
-
 import type { ComponentProps, ComponentPropsWithRef } from "react";
 import { useId, useRef, useState } from "react";
 import type { FileIcon } from "@untitledui/file-icons";

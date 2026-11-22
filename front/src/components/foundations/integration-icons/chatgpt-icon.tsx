@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const ChatGPTIcon = ({ grayscale, ...props }: SVGProps<SVGSVGElement> & { grayscale?: boolean }) => {

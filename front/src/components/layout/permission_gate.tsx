@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { usePermissions } from "@/hooks/use_permissions";
 import type { Operacao } from "@/types/auth";

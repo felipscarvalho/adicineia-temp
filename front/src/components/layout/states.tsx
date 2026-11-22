@@ -32,7 +32,7 @@ export function ErrorState({
             {mensagem && <p className="max-w-lg text-sm text-tertiary">{mensagem}</p>}
             {children}
             {aoTentarNovamente && (
-                <Button size="sm" color="secondary" className="glass-control" onClick={aoTentarNovamente}>
+                <Button size="sm" color="secondary" onClick={aoTentarNovamente}>
                     Tentar novamente
                 </Button>
             )}

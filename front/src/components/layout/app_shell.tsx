@@ -1,18 +1,16 @@
-"use client";
-
-import { type ReactNode, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Menu02 } from "@untitledui/icons";
-import { useRouter } from "next/navigation";
+import { Outlet, useNavigate } from "react-router";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Logo } from "@/components/brand/logo";
 import { NAVEGACAO, filtrarNavegacao } from "@/components/navigation/navegacao";
 import { Sidebar } from "@/components/navigation/sidebar";
 import { useUserStore } from "@/stores/user_store";
-import { ClientOnly } from "./client_only";
 import { LoadingState } from "./states";
 
-function Area({ children }: { children: ReactNode }) {
-    const router = useRouter();
+/** Rota de layout da área logada: revalida o usuário e filtra a navegação por permissão. */
+export function AppShell() {
+    const navegar = useNavigate();
     const { usuario, permissoes, situacao, revalidate, logout } = useUserStore();
     const [menuAberto, setMenuAberto] = useState(false);
 
@@ -21,13 +19,13 @@ function Area({ children }: { children: ReactNode }) {
         let ativo = true;
         void revalidate().then((valida) => {
             if (ativo && !valida) {
-                router.replace("/login");
+                navegar("/login", { replace: true });
             }
         });
         return () => {
             ativo = false;
         };
-    }, [revalidate, router]);
+    }, [revalidate, navegar]);
 
     if (situacao !== "autenticado" || !usuario) {
         return <LoadingState rotulo="Verificando a sessão..." />;
@@ -44,26 +42,21 @@ function Area({ children }: { children: ReactNode }) {
             {menuAberto && (
                 <div className="fixed inset-0 z-40 bg-overlay/60 p-2 lg:hidden" onClick={() => setMenuAberto(false)}>
                     <div className="h-full max-w-xs" onClick={(evento) => evento.stopPropagation()}>
-                        <Sidebar secoes={secoes} usuario={usuario} aoSair={sair} className="glass-strong" />
+                        <Sidebar secoes={secoes} usuario={usuario} aoSair={sair} className="bg-primary" />
                     </div>
                 </div>
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-4">
-                <header className="flex items-center justify-between rounded-2xl glass px-4 py-3 ring-1 ring-secondary lg:hidden">
+                <header className="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 ring-1 ring-secondary lg:hidden">
                     <Logo />
                     <ButtonUtility size="sm" color="tertiary" icon={Menu02} tooltip="Abrir menu" onClick={() => setMenuAberto(true)} />
                 </header>
-                <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-2 py-4 md:px-4 lg:py-6">{children}</main>
+                <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-2 py-4 md:px-4 lg:py-6">
+                    <Suspense fallback={<LoadingState rotulo="Carregando..." />}>
+                        <Outlet />
+                    </Suspense>
+                </main>
             </div>
         </div>
-    );
-}
-
-/** Estrutura da área logada: só monta no navegador, revalida o usuário e filtra a navegação por permissão. */
-export function AppShell({ children }: { children: ReactNode }) {
-    return (
-        <ClientOnly fallback={<LoadingState rotulo="Carregando..." />}>
-            <Area>{children}</Area>
-        </ClientOnly>
     );
 }

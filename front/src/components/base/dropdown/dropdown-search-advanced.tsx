@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { ChevronDown, Plus, SearchLg } from "@untitledui/icons";
 import type { Selection } from "react-aria-components";

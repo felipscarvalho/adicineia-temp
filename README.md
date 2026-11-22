@@ -4,7 +4,7 @@ Aplicação web para avaliação e tratamento controlado da qualidade de dataset
 (unicidade, completude e validade), desenvolvida no Projeto Integrador de COMP0503 —
 Engenharia de Software (UFS/DCOMP, 2026.2), equipe P2611.
 
-Este repositório contém o **backend** (API NestJS, em `back/`), o **frontend** (SPA Next.js/React,
+Este repositório contém o **backend** (API NestJS, em `back/`), o **frontend** (SPA em React,
 em `front/`), os scripts de banco e os testes automatizados.
 A especificação de referência está na P1 v1.3 (requisitos) e na P2 v1.1 (análise, projeto e
 arquitetura); a organização segue a seção 6.1 da P3. Os relatórios técnicos estão em
@@ -29,7 +29,7 @@ front está em [`front/README.md`](front/README.md).
 | `docker-compose.yml` | Produção: banco, migração, back, front e nginx com HTTPS |
 | `docker-compose.hml.yml` | PostgreSQL 16 de desenvolvimento e testes |
 | `database/` | Migrações SQL do PostgreSQL 16 e script de papéis do banco |
-| `front/` | SPA em Next.js 16 + React 19 + Untitled UI (telas T00–T07) |
+| `front/` | SPA em React 19 + Vite + React Router + Untitled UI (telas T00–T07) |
 | `front/e2e/` | Ensaio ponta a ponta com Playwright contra back e front reais |
 | `tests/integracao/` | Testes de integração do backend (CT001–CT007 e CTN aplicáveis) |
 | `tests/fixtures/` | Datasets sintéticos com gabaritos por linha e regra e amostra de vocabulário |
@@ -60,12 +60,12 @@ Frontend (com a API em execução na porta 3000):
 ```bash
 cd front
 npm ci
-cp .env.example .env.local                    # NEXT_PUBLIC_API_URL=/api e API_PROXY_URL do backend
-npm run build && npm run start                # SPA em http://localhost:3001
+cp .env.example .env.local                    # VITE_API_URL=/api e API_PROXY_URL do backend
+npm run dev                                   # SPA em http://localhost:3001 (ou build + preview)
 ```
 
-O Next encaminha `/api/*` ao backend, então SPA e API ficam no mesmo domínio e o cookie de sessão
-funciona sem configuração de CORS.
+O servidor do Vite encaminha `/api/*` ao backend (em produção, o nginx), então SPA e API ficam no
+mesmo domínio e o cookie de sessão funciona sem configuração de CORS.
 
 Contas criadas pelo seed: `analista@dataqualisus.local`, `gestor@dataqualisus.local` e
 `equipe.tecnica@dataqualisus.local`. Não há autocadastro (P1, seção 8.3).

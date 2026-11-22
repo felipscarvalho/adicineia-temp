@@ -1,5 +1,3 @@
-"use client";
-
 import { Clock } from "@untitledui/icons";
 import type { SelectItemType } from "@/components/base/select/select";
 

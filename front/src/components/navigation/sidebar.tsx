@@ -1,8 +1,6 @@
-"use client";
-
 import type { FC } from "react";
 import { LogOut01 } from "@untitledui/icons";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router";
 import { NavItemBase } from "@/components/application/app-navigation/base-components/nav-item";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Logo } from "@/components/brand/logo";
@@ -24,11 +22,11 @@ export interface SecaoNavegacao {
 
 /** Barra lateral dividida em seções por módulo; recebe as seções já filtradas por permissão. */
 export function Sidebar({ secoes, usuario, aoSair, className }: { secoes: SecaoNavegacao[]; usuario: Usuario; aoSair: () => void; className?: string }) {
-    const caminho = usePathname();
+    const caminho = useLocation().pathname;
     return (
         <aside
             aria-label="Navegação principal"
-            className={cx("flex h-full w-full flex-col gap-6 overflow-y-auto rounded-2xl glass p-4 ring-1 ring-secondary lg:w-68", className)}
+            className={cx("flex h-full w-full flex-col gap-6 overflow-y-auto rounded-2xl bg-primary p-4 ring-1 ring-secondary lg:w-68", className)}
         >
             <div className="px-2 pt-1">
                 <Logo />

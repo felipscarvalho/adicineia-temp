@@ -1,11 +1,9 @@
-"use client";
-
 import { AlertCircle, CheckCircle, InfoCircle } from "@untitledui/icons";
 import { Toaster as SonnerToaster, toast as sonner } from "sonner";
 
 /**
  * Toasts do projeto. Sempre importar daqui; nunca de "sonner" diretamente.
- * Visual de vidro forte (`glass-strong`) para menus, popovers, modais e toasts.
+ * Visual padrão do Untitled UI (superfície primária com anel e sombra).
  */
 export const toast = {
     success: (mensagem: string, descricao?: string) =>
@@ -22,7 +20,7 @@ export function Toaster() {
             toastOptions={{
                 unstyled: true,
                 classNames: {
-                    toast: "glass-strong flex w-full items-start gap-3 rounded-xl p-4 shadow-lg ring-1 ring-secondary",
+                    toast: "flex w-full bg-primary items-start gap-3 rounded-xl p-4 shadow-lg ring-1 ring-secondary",
                     title: "text-sm font-semibold text-primary",
                     description: "text-sm text-tertiary",
                 },

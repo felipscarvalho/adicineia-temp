@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const ViteIcon = ({ grayscale, ...props }: SVGProps<SVGSVGElement> & { grayscale?: boolean }) => {

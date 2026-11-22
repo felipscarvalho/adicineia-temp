@@ -22,7 +22,7 @@ export function ListPagination({
                 <Button
                     size="sm"
                     color="secondary"
-                    className="glass-control"
+
                     iconLeading={ArrowLeft}
                     isDisabled={pagina <= 1}
                     onClick={() => aoMudar(pagina - 1)}
@@ -32,7 +32,7 @@ export function ListPagination({
                 <Button
                     size="sm"
                     color="secondary"
-                    className="glass-control"
+
                     iconTrailing={ArrowRight}
                     isDisabled={pagina >= totalPaginas}
                     onClick={() => aoMudar(pagina + 1)}

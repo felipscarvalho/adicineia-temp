@@ -1,5 +1,3 @@
-"use client";
-
 import { type HTMLAttributes, type ReactNode } from "react";
 import { HintText } from "@/components/base/input/hint-text";
 import type { TextFieldProps } from "@/components/base/input/input";

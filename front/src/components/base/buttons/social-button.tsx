@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactElement, ReactNode, RefAttributes } from "react";
 import type { ButtonProps as AriaButtonProps, LinkProps as AriaLinkProps } from "react-aria-components";
 import { Button as AriaButton, Link as AriaLink } from "react-aria-components";

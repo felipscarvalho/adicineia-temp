@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, HTMLAttributes, MouseEventHandler, ReactNode, RefAttributes } from "react";
 import { ChevronDown, Share04 } from "@untitledui/icons";
 import type { LinkProps as AriaLinkProps } from "react-aria-components";

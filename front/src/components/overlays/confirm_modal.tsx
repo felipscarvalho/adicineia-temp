@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { Button } from "@/components/base/buttons/button";
 import { ModalBase } from "./modal_base";
@@ -32,13 +30,13 @@ export function ConfirmModal({
         <ModalBase isOpen={isOpen} aoFechar={aoFechar} titulo={titulo} descricao={descricao}>
             {children}
             <div className="flex justify-end gap-3">
-                <Button size="md" color="secondary" className="glass-control" onClick={aoFechar} isDisabled={confirmando}>
+                <Button size="md" color="secondary" onClick={aoFechar} isDisabled={confirmando}>
                     Cancelar
                 </Button>
                 <Button
                     size="md"
                     color={destrutivo ? "primary-destructive" : "primary"}
-                    className={destrutivo ? "glass-destructive" : "glass-brand"}
+
                     onClick={aoConfirmar}
                     isLoading={confirmando}
                     isDisabled={bloqueado}

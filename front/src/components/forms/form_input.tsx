@@ -1,5 +1,3 @@
-"use client";
-
 import type { ComponentProps } from "react";
 import { type Control, type FieldPath, type FieldValues, useController } from "react-hook-form";
 import { Input } from "@/components/base/input/input";
@@ -23,7 +21,7 @@ export function FormInput<T extends FieldValues>({ control, name, dica, ...props
             onBlur={onBlur}
             isInvalid={Boolean(fieldState.error)}
             hint={fieldState.error?.message ?? dica}
-            inputClassName={props.inputClassName ?? "glass-field"}
+            inputClassName={props.inputClassName}
         />
     );
 }

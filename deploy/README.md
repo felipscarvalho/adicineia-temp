@@ -7,7 +7,7 @@
 | `db` | PostgreSQL 16 (volume `pgdata`) |
 | `migracao` | Execução única a cada subida: migrações, papel `dataqualisus_app` com privilégios mínimos (ADR-006) e contas de demonstração, se as senhas forem informadas |
 | `back` | API NestJS, conectada como `dataqualisus_app`; CSVs imutáveis no volume `armazenamento` |
-| `front` | SPA Next.js |
+| `front` | SPA React compilada pelo Vite, servida como arquivos estáticos |
 | `nginx` | HTTPS em 443, redirecionamento de 80, `/api/` para o back e o resto para o front |
 | `certbot` | Emite o certificado do Let's Encrypt (HTTP-01) e renova a cada 12 h |
 

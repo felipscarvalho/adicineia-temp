@@ -1,5 +1,3 @@
-"use client";
-
 import { type ComponentType, type HTMLAttributes, type ReactNode, type Ref, createContext, useContext } from "react";
 import { HelpCircle, InfoCircle } from "@untitledui/icons";
 import type { DateInputProps as AriaDateInputProps } from "react-aria-components";

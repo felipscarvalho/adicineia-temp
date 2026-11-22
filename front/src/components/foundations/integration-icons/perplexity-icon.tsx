@@ -1,5 +1,3 @@
-"use client";
-
 import type { SVGProps } from "react";
 
 const PerplexityIcon = ({ grayscale, ...props }: SVGProps<SVGSVGElement> & { grayscale?: boolean }) => {

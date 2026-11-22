@@ -1,5 +1,3 @@
-"use client";
-
 import { type FC, type ReactNode } from "react";
 import { Bell01, LifeBuoy01, SearchLg, Settings01 } from "@untitledui/icons";
 import { TabList, Tabs } from "@/components/application/tabs/tabs";

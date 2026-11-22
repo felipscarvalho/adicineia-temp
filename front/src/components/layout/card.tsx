@@ -16,7 +16,7 @@ export function Card({
     className?: string;
 }) {
     return (
-        <section className={cx("flex flex-col gap-5 rounded-2xl glass p-5 shadow-xs ring-1 ring-secondary md:p-6", className)}>
+        <section className={cx("flex flex-col gap-5 rounded-2xl bg-primary p-5 shadow-xs ring-1 ring-secondary md:p-6", className)}>
             {(titulo || acoes) && (
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex flex-col gap-0.5">
@@ -34,7 +34,7 @@ export function Card({
 /** Card em duas colunas: aside (resumo) e conteúdo. */
 export function SplitCard({ aside, children, className }: { aside: ReactNode; children: ReactNode; className?: string }) {
     return (
-        <section className={cx("grid gap-6 rounded-2xl glass p-5 shadow-xs ring-1 ring-secondary md:p-6 lg:grid-cols-[18rem_1fr]", className)}>
+        <section className={cx("grid gap-6 rounded-2xl bg-primary p-5 shadow-xs ring-1 ring-secondary md:p-6 lg:grid-cols-[18rem_1fr]", className)}>
             <aside className="flex flex-col gap-4 lg:border-r lg:border-secondary lg:pr-6">{aside}</aside>
             <div className="flex min-w-0 flex-col gap-6">{children}</div>
         </section>

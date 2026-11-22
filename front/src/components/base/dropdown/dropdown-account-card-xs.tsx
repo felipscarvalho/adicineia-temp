@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { ChevronDown, LogOut01, Moon01, Plus, Settings01 } from "@untitledui/icons";
 import type { Selection } from "react-aria-components";

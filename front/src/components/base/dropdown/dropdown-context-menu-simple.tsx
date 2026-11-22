@@ -1,5 +1,3 @@
-"use client";
-
 import { Button as AriaButton, SubmenuTrigger } from "react-aria-components";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 

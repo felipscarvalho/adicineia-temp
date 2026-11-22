@@ -1,5 +1,3 @@
-"use client";
-
 import { type ImgHTMLAttributes, type PropsWithChildren, type RefAttributes, createContext, useContext, useState } from "react";
 import { User01 } from "@untitledui/icons";
 import {

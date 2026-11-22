@@ -3,7 +3,7 @@ import { setupServer } from "msw/node";
 import type { Operacao, Sessao } from "@/types/auth";
 
 /** Base usada pelo cliente nos testes (NEXT_PUBLIC_API_URL ausente → "/api" relativo ao jsdom). */
-export const API = "http://localhost:3000/api";
+export const API = "http://localhost:3001/api";
 
 export const TODAS_OPERACOES: Operacao[] = [
     "SESSAO_PROPRIA",
