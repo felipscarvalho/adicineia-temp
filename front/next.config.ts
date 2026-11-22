@@ -7,6 +7,8 @@ import type { NextConfig } from "next";
 const destinoApi = process.env.API_PROXY_URL ?? "http://localhost:3000";
 
 const nextConfig: NextConfig = {
+    // Necessário para a configuração de segmento `instant` das páginas da área logada.
+    cacheComponents: true,
     experimental: {
         optimizePackageImports: ["@untitledui/icons"],
     },
