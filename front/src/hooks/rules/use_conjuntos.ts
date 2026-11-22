@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { simulacaoKeys } from "@/hooks/simulations/use_simulacoes";
 import * as conjuntosService from "@/services/rules/conjuntos";
 
 export const conjuntoKeys = {
@@ -34,7 +35,7 @@ export function useAtualizarConjunto(id: string) {
     return useMutation({
         mutationFn: (payload: Partial<conjuntosService.ConjuntoPayload>) => conjuntosService.atualizarConjunto(id, payload),
         meta: { erroTratadoNaTela: true },
-        onSuccess: () => Promise.all([cliente.invalidateQueries({ queryKey: conjuntoKeys.all }), cliente.invalidateQueries({ queryKey: ["simulacoes"] })]),
+        onSuccess: () => Promise.all([cliente.invalidateQueries({ queryKey: conjuntoKeys.all }), cliente.invalidateQueries({ queryKey: simulacaoKeys.all })]),
     });
 }
 
@@ -42,7 +43,7 @@ export function useExcluirConjunto(id: string) {
     const cliente = useQueryClient();
     return useMutation({
         mutationFn: () => conjuntosService.excluirConjunto(id),
-        onSuccess: () => Promise.all([cliente.invalidateQueries({ queryKey: conjuntoKeys.all }), cliente.invalidateQueries({ queryKey: ["simulacoes"] })]),
+        onSuccess: () => Promise.all([cliente.invalidateQueries({ queryKey: conjuntoKeys.all }), cliente.invalidateQueries({ queryKey: simulacaoKeys.all })]),
     });
 }
 

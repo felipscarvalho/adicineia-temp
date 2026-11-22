@@ -1,6 +1,7 @@
 import type { Dataset } from "@/types/datasets";
 import type { Catalogo, Conjunto, Regra } from "@/types/rules/regra";
 import type { Vocabulario } from "@/types/rules/vocabulario";
+import type { Simulacao } from "@/types/simulations";
 
 /** Dados de exemplo compartilhados pelos testes (sintéticos). */
 export const datasetExemplo: Dataset = {
@@ -122,4 +123,89 @@ export const conjuntoExemplo: Conjunto = {
     datasets: ["d1"],
     criadoEm: "2026-11-20T10:00:00.000Z",
     atualizadoEm: "2026-11-21T10:00:00.000Z",
+};
+
+export const simulacaoConcluida: Simulacao = {
+    id: "s1",
+    status: "CONCLUIDA",
+    mensagem: null,
+    datasetId: "d1",
+    versaoId: "v2",
+    versaoNumero: 2,
+    conjunto: { id: "c1", nome: "Conjunto atendimentos", revisao: 3 },
+    aceitaEm: "2026-11-21T12:00:00.000Z",
+    concluidaEm: "2026-11-21T12:00:01.000Z",
+    limiteMs: 60000,
+    vigente: true,
+    motivoNaoVigente: null,
+    aplicavel: true,
+    hashEntrada: "a".repeat(64),
+    hashEntradaConferido: "a".repeat(64),
+    totalLinhas: 24,
+    totalLinhasComViolacao: 5,
+    totalPrevistoAlteradas: 2,
+    totalPrevistoRemovidas: 1,
+    totalPrevistoAfetadas: 3,
+    resultados: [
+        {
+            ordem: 1,
+            regraId: "r-sexo",
+            revisao: 1,
+            nome: "Sexo informado",
+            dimensao: "COMPLETUDE",
+            colunas: ["sexo"],
+            totalAvaliados: 24,
+            totalViolacoes: 3,
+            linhasVioladas: [3, 8, 14],
+            percentualAprovacao: 87.5,
+            acao: "PREENCHER_VAZIO",
+            linhasPrevistas: 2,
+        },
+        {
+            ordem: 2,
+            regraId: "r-idade",
+            revisao: 2,
+            nome: "Idade entre 0 e 120",
+            dimensao: "VALIDADE",
+            colunas: ["idade"],
+            totalAvaliados: 24,
+            totalViolacoes: 3,
+            linhasVioladas: [4, 9, 11],
+            percentualAprovacao: 87.5,
+            acao: null,
+            linhasPrevistas: 0,
+        },
+    ],
+    previa: [
+        {
+            linha: 3,
+            tipo: "ATUALIZACAO",
+            antes: { sexo: "" },
+            depois: { sexo: "NAO_INFORMADO" },
+            acoes: [{ regraId: "r-sexo", acao: "PREENCHER_VAZIO", coluna: "sexo" }],
+        },
+        { linha: 6, tipo: "REMOCAO", antes: { id: "A002" }, depois: null, acoes: [{ regraId: "r-id", acao: "REMOVER_REPETICOES", coluna: null }] },
+    ],
+    configuracaoExecutada: {
+        regras: [
+            { regraId: "r-sexo", revisao: 1, nome: "Sexo informado", ordem: 1, configuracao: regraSexo.configuracao },
+            { regraId: "r-idade", revisao: 2, nome: "Idade entre 0 e 120", ordem: 2, configuracao: regraIdade.configuracao },
+        ],
+        vocabularios: [],
+    },
+};
+
+export const simulacaoEmExecucao: Simulacao = {
+    ...simulacaoConcluida,
+    status: "EM_EXECUCAO",
+    concluidaEm: null,
+    aplicavel: false,
+    hashEntradaConferido: null,
+    totalLinhas: null,
+    totalLinhasComViolacao: null,
+    totalPrevistoAlteradas: null,
+    totalPrevistoRemovidas: null,
+    totalPrevistoAfetadas: null,
+    resultados: [],
+    previa: [],
 };

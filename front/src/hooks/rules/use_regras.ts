@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { simulacaoKeys } from "@/hooks/simulations/use_simulacoes";
 import * as regrasService from "@/services/rules/regras";
 import { conjuntoKeys } from "./use_conjuntos";
 
@@ -45,7 +46,7 @@ export function useAtualizarRegra(id: string) {
             Promise.all([
                 cliente.invalidateQueries({ queryKey: regraKeys.all }),
                 cliente.invalidateQueries({ queryKey: conjuntoKeys.all }),
-                cliente.invalidateQueries({ queryKey: ["simulacoes"] }),
+                cliente.invalidateQueries({ queryKey: simulacaoKeys.all }),
             ]),
     });
 }
