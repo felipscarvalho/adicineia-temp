@@ -1,0 +1,63 @@
+# Integração contínua do frontend (P3, seção 9): lint, tipos, testes de componentes, build e
+# ensaio ponta a ponta contra o backend real.
+name: front
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  ponta-a-ponta:
+    runs-on: ubuntu-latest
+    needs: verificar
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dataqualisus
+          POSTGRES_PASSWORD: dataqualisus_dev
+          POSTGRES_DB: dataqualisus
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U dataqualisus"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Backend compilado
+        working-directory: back
+        run: npm ci && npm run build
+      - name: Frontend compilado
+        working-directory: front
+        run: npm ci && npm run build
+      - name: Navegador
+        working-directory: front
+        run: npx playwright install --with-deps chromium
+      - name: Ensaio ponta a ponta
+        working-directory: front
+        run: npm run test:e2e
