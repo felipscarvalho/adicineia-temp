@@ -7,7 +7,7 @@
 | Escopo | SPA em `front/` para as telas T00–T07 da P2, consumindo a API de `back/` |
 | Fontes de verdade | P1 v1.3, P2 v1.1 (ADR-001, ADR-006, ADR-007, ADR-008, telas T00–T07), P3 (estrutura do repositório) e o padrão de arquitetura do front descrito em `front/README.md` |
 | Data das validações | 22/11/2026 |
-| Commits | `8e437a2` a `f11396c` na branch `main` (seção 9) |
+| Commits | `8e437a2` a `f11396c` (versão Next.js) e `2b9cf91` a `904a302` (migração para SPA com Vite) na branch `main` (seção 9) |
 
 Este relatório registra somente o que foi implementado e executado. O que depende de avaliação
 humana (usabilidade, navegadores) ou de material externo está na seção 8.
@@ -31,34 +31,37 @@ integração aprovados, lint e tipos sem erros.
 A arquitetura segue `front/README.md` (o padrão combinado), com as adaptações da seção 7 daquele
 documento. Resumo:
 
-* **Stack:** Next.js 16.4.6 (App Router, `cacheComponents`), React 19, TypeScript, Untitled UI React
-  (React Aria + Tailwind CSS 4, copiado pelo CLI `untitledui init --nextjs`), axios, TanStack Query,
-  Zustand, react-hook-form + Zod, moment, sonner (encapsulado), `@untitledui/icons`.
+* **Stack:** SPA em React 19 + TypeScript (ADR-001), compilada pelo Vite 8 e com rotas no navegador
+  pelo React Router 8; Untitled UI React (React Aria + Tailwind CSS 4, kit do CLI
+  `untitledui init --vite`), axios, TanStack Query, Zustand, react-hook-form + Zod, moment, sonner
+  (encapsulado), `@untitledui/icons`.
 * **Fluxo de dados:** componente → hook (TanStack Query, `hooks/<módulo>/`) → service
   (`services/<módulo>/`) → `lib/api.ts` (único arquivo que importa axios) → `/api` → backend.
 * **Sessão (ADR-006):** cookie HttpOnly/Secure/SameSite=Lax enviado com `withCredentials`; o
   interceptor acrescenta `X-CSRF-Token` em métodos que alteram estado; 401 limpa a sessão e volta a
   `/login`. O `user_store` guarda usuário, permissões e token CSRF em memória e os recupera com
   `revalidate()`; nada é persistido no navegador.
-* **Mesmo domínio:** `next.config.ts` encaminha `/api/*` ao backend (`API_PROXY_URL`), dispensando CORS.
-* **Área logada:** route group `app/(app)/` com `AppShell` (só no navegador via `ClientOnly`,
-  revalidação, sidebar por módulo filtrada pelas permissões). Cada `page.tsx` é server component com
-  `export const instant = false` e `metadata`, e renderiza a tela cliente de `_components/`.
+* **Mesmo domínio:** em desenvolvimento e no `vite preview`, o `vite.config.ts` encaminha `/api/*` ao
+  backend (`API_PROXY_URL`); em produção, o nginx de `deploy/` faz o mesmo. Dispensa CORS.
+* **Área logada:** rotas filhas do `AppShell` em `src/app.tsx` (rota de layout com `<Outlet />`:
+  revalidação, sidebar por módulo filtrada pelas permissões). Cada tela fica em
+  `pages/<rota>/_components/` (detalhes em `pages/<rota>/detalhe/`), é carregada com `lazy` (um
+  pacote por rota) e define o título da aba com `TituloPagina` (`<title>` do React 19).
 * **Erros:** `ApiError` normalizado; mutations com formulário exibem a mensagem e os erros de campo
   (`detalhes`) no próprio formulário; as demais caem num toast global (`MutationCache`).
-* **Identidade visual:** `styles/lawd-theme.css` sobrescreve `brand` e `neutral`, define fontes
-  MuseoModerno/JetBrains Mono, fundo com brilhos, scrollbar e utilitários `glass*`.
+* **Identidade visual:** padrão do Untitled UI, sem tema próprio (`styles/theme.css` como o CLI
+  entrega, fonte Inter); modo claro/escuro pelo `ThemeProvider` do kit, seguindo o sistema por padrão.
 
 ### 2.1 Módulos do front e correspondência com o backend
 
 | Módulo (types/services/hooks) | Endpoints consumidos | Telas |
 |-------------------------------|----------------------|-------|
 | `auth` | `/auth/entrar`, `/auth/sessao`, `/auth/sair` | T00 (`/login`), `AppShell` |
-| `datasets` | `/datasets`, `/datasets/:id`, `/datasets/:id/versoes`, `/datasets/:id/versoes/:versaoId/registros` | T01 (`/datasets`, `/datasets/[id]`) |
-| `rules` | `/vocabularios`, `/catalogo`, `/regras`, `/regras/:id/revisoes`, `/conjuntos`, `/conjuntos/:id/revisoes`, `/conjuntos/:id/datasets/:datasetId` | T02/T03 (`/regras`, `/regras/[id]`, `/conjuntos`, `/conjuntos/[id]`, `/vocabularios`) |
-| `simulations` | `/simulacoes`, `/simulacoes/:id` | T04 (`/simulacoes`, `/simulacoes/[id]`) |
-| `treatments` | `/tratamentos` | T05 (painel em `/simulacoes/[id]`) |
-| `audit` | `/auditoria/datasets`, `/auditoria/extratos`, `/auditoria/extratos/:id`, `/auditoria/extratos/:id/pdf` | T07 (`/auditoria`, `/auditoria/[id]`) |
+| `datasets` | `/datasets`, `/datasets/:id`, `/datasets/:id/versoes`, `/datasets/:id/versoes/:versaoId/registros` | T01 (`/datasets`, `/datasets/:id`) |
+| `rules` | `/vocabularios`, `/catalogo`, `/regras`, `/regras/:id/revisoes`, `/conjuntos`, `/conjuntos/:id/revisoes`, `/conjuntos/:id/datasets/:datasetId` | T02/T03 (`/regras`, `/regras/:id`, `/conjuntos`, `/conjuntos/:id`, `/vocabularios`) |
+| `simulations` | `/simulacoes`, `/simulacoes/:id` | T04 (`/simulacoes`, `/simulacoes/:id`) |
+| `treatments` | `/tratamentos` | T05 (painel em `/simulacoes/:id`) |
+| `audit` | `/auditoria/datasets`, `/auditoria/extratos`, `/auditoria/extratos/:id`, `/auditoria/extratos/:id/pdf` | T07 (`/auditoria`, `/auditoria/:id`) |
 | `diagnostics` | `/diagnosticos/versoes`, `/diagnosticos/versoes/:versaoId`, `.../exportar?formato=` | T06 (`/diagnosticos`) |
 
 ---
@@ -70,9 +73,9 @@ documento. Resumo:
   credenciais inválidas vinda do backend, redirecionamento para a primeira tela do perfil, revalidação
   da sessão ao abrir a área logada, redirecionamento sem sessão e botão Sair com recarga completa.
 * **Requisitos:** RF007, UC-08 (fluxos 2a, 4a), RNF003, ADR-006, DS4.
-* **Arquivos:** `app/login/page.tsx`, `app/login/_components/login_form.tsx`, `schemas/auth/entrar.ts`,
+* **Arquivos:** `pages/login/login_pagina.tsx`, `pages/login/_components/login_form.tsx`, `schemas/auth/entrar.ts`,
   `services/auth/index.ts`, `types/auth/index.ts`, `stores/user_store.ts`, `components/layout/app_shell.tsx`,
-  `components/layout/client_only.tsx`, `app/page.tsx`.
+  `pages/inicio_pagina.tsx`.
 * **Testes:** `login_form.test.tsx` (3), `user_store.test.ts` (4), `app_shell.test.tsx` (2).
 * **Commit:** `42f6ccb`.
 
@@ -92,7 +95,7 @@ documento. Resumo:
   separador e arquivo; checagens de UX (extensão `.csv`, vazio, 10.000.000 bytes); envio multipart;
   motivo da rejeição do servidor exibido no modal.
 * **Requisitos:** RF001, UC-01 (passos 2–4, fluxo 3a), seção 8.3, RNF005.
-* **Arquivos:** `app/(app)/datasets/page.tsx`, `_components/datasets_tela.tsx`, `_components/importar_dataset_modal.tsx`,
+* **Arquivos:** `pages/datasets/_components/datasets_tela.tsx`, `_components/importar_dataset_modal.tsx`,
   `_components/tabela_datasets.tsx`, `components/datasets/campo_arquivo_csv.tsx`, `components/datasets/itens_separador.ts`,
   `schemas/datasets/arquivo_csv.ts`, `schemas/datasets/importar_dataset.ts`, `services/datasets/index.ts`,
   `hooks/datasets/use_datasets.ts`, `types/datasets/index.ts`.
@@ -105,7 +108,7 @@ documento. Resumo:
   por versão (valores como texto), nova versão em modal e exclusão lógica com confirmação. Dataset
   excluído ou perfil sem edição veem a mesma estrutura só para leitura.
 * **Requisitos:** RF001, RN04, UC-01 (fluxos 5a–5c), ADR-005, MOD-15.
-* **Arquivos:** `app/(app)/datasets/[id]/page.tsx` e `_components/` (`dataset_detalhe_tela.tsx`,
+* **Arquivos:** `pages/datasets/detalhe/_components/` (`dataset_detalhe_tela.tsx`,
   `metadados_form.tsx`, `tabela_versoes.tsx`, `registros_versao.tsx`, `nova_versao_modal.tsx`),
   `components/datasets/situacao_badge.tsx`, `schemas/datasets/metadados.ts`.
 * **Testes:** `dataset_detalhe_tela.test.tsx` (8).
@@ -116,7 +119,7 @@ documento. Resumo:
   aviso de que a importação é feita por script e só a CID-10 é admitida; estado vazio informa o
   bloqueio das regras de vocabulário.
 * **Requisitos:** RN02, ADR-009, MOD-13.
-* **Arquivos:** `app/(app)/vocabularios/`, `services/rules/vocabularios.ts`, `hooks/rules/use_vocabularios.ts`,
+* **Arquivos:** `pages/vocabularios/`, `services/rules/vocabularios.ts`, `hooks/rules/use_vocabularios.ts`,
   `types/rules/vocabulario.ts`.
 * **Testes:** `vocabularios_tela.test.tsx` (4).
 * **Commit:** `24d9890`.
@@ -131,7 +134,7 @@ documento. Resumo:
 * **Arquivos:** `components/rules/` (`regra_campos.tsx`, `ordem_regras.tsx`, `descricao_regra.ts`,
   `dimensao_badge.tsx`, `aplicar_erros_servidor.ts`), `schemas/rules/regra.ts`, `schemas/rules/conjunto.ts`,
   `services/rules/regras.ts`, `services/rules/conjuntos.ts`, `hooks/rules/use_regras.ts`,
-  `hooks/rules/use_conjuntos.ts`, `types/rules/regra.ts`, `app/(app)/regras/**`, `app/(app)/conjuntos/**`.
+  `hooks/rules/use_conjuntos.ts`, `types/rules/regra.ts`, `pages/regras/**`, `pages/conjuntos/**`.
 * **Testes:** `regra.test.ts` (17), `descricao_regra.test.ts` (1), `regras_tela.test.tsx` (5),
   `regra_detalhe_tela.test.tsx` (5), `conjuntos_tela.test.tsx` (4).
 * **Commit:** `a357b61`.
@@ -142,7 +145,7 @@ documento. Resumo:
   regra, percentuais, totais distintos, prévia antes/depois de até 20 linhas, conferência do SHA-256;
   estados de tempo esgotado, falha, invalidação e simulação aplicada; histórico da versão.
 * **Requisitos:** RF003, UC-03 (fluxos 3a, 3b, 5a), ADR-008, MOD-06, MOD-12.
-* **Arquivos:** `app/(app)/simulacoes/**` (`simulacoes_tela.tsx`, `simulacao_detalhe_tela.tsx`,
+* **Arquivos:** `pages/simulacoes/**` (`simulacoes_tela.tsx`, `simulacao_detalhe_tela.tsx`,
   `resultados_regras.tsx`, `previa_acoes.tsx`), `components/simulations/status_simulacao.tsx`,
   `services/simulations/index.ts`, `hooks/simulations/use_simulacoes.ts`, `types/simulations/index.ts`.
 * **Testes:** `simulacoes_tela.test.tsx` (2), `simulacao_detalhe_tela.test.tsx` (4).
@@ -153,7 +156,7 @@ documento. Resumo:
   totais e ID técnico do usuário; extrato com os campos da RN03, regras e ações aplicadas, alterações
   por linha paginadas; exportação em PDF; indisponibilidade sem detalhes; nenhuma ação de edição.
 * **Requisitos:** RF006, RN03, UC-06 (fluxos 2a, 2b, 5a), ADR-007, D04.
-* **Arquivos:** `app/(app)/auditoria/**`, `services/audit/index.ts`, `hooks/audit/use_auditoria.ts`,
+* **Arquivos:** `pages/auditoria/**`, `services/audit/index.ts`, `hooks/audit/use_auditoria.ts`,
   `types/audit/index.ts`, `lib/download.ts`.
 * **Testes:** `auditoria_tela.test.tsx` (5).
 * **Commit:** `c2da082`.
@@ -164,7 +167,7 @@ documento. Resumo:
   só após marcar a revisão; envio com `confirmado: true`; resultado com nova versão e link do extrato;
   recusas (reaplicação, invalidação) exibidas no modal; sem painel quando não há alterações previstas.
 * **Requisitos:** RF004, RN03, RN04, UC-04, UC-05, ADR-004.
-* **Arquivos:** `app/(app)/simulacoes/[id]/_components/tratamento_painel.tsx`, `services/treatments/index.ts`,
+* **Arquivos:** `pages/simulacoes/detalhe/_components/tratamento_painel.tsx`, `services/treatments/index.ts`,
   `hooks/treatments/use_tratamentos.ts`, `types/treatments/index.ts`.
 * **Testes:** `tratamento_painel.test.tsx` (6).
 * **Commit:** `0b54ba4`.
@@ -175,7 +178,7 @@ documento. Resumo:
   versão, SHA-256, conjunto e instante; orientação para simular quando não há avaliação ou ela está
   desatualizada; exportação PDF e XLSX; aviso de não certificação.
 * **Requisitos:** RF005, RN01, RN02, UC-07 (fluxos 2a, 3a, 5a), US05, US06, ADR-007, MOD-14.
-* **Arquivos:** `app/(app)/diagnosticos/**` (`diagnostico_tela.tsx`, `cartao_indicador.tsx`),
+* **Arquivos:** `pages/diagnosticos/**` (`diagnostico_tela.tsx`, `cartao_indicador.tsx`),
   `services/diagnostics/index.ts`, `hooks/diagnostics/use_diagnosticos.ts`, `types/diagnostics/index.ts`.
 * **Testes:** `diagnostico_tela.test.tsx` (6).
 * **Commit:** `fa4f507`.
@@ -186,29 +189,32 @@ documento. Resumo:
 
 | ID | Decisão | Justificativa |
 |----|---------|---------------|
-| DF01 | Projeto criado pelo CLI do Untitled UI (`init --nextjs`), sem workflows de sincronização e demonstrações do kit | Componentes base vindos da biblioteca indicada; arquivos alheios ao projeto removidos |
+| DF01 | Projeto criado pelo CLI do Untitled UI (`init --vite`), sem as páginas de demonstração do kit | Componentes base vindos da biblioteca indicada; arquivos alheios ao projeto removidos |
 | DF02 | Sessão por cookie HttpOnly + CSRF, sem token no navegador | ADR-006; adaptação explícita do padrão de referência |
-| DF03 | Proxy `/api` no Next (`rewrites`) | Mesmo domínio para o cookie SameSite=Lax; sem CORS |
+| DF03 | Proxy `/api` no servidor do Vite (dev e preview) e no nginx (produção) | Mesmo domínio para o cookie SameSite=Lax; sem CORS |
 | DF04 | `permissoes` devolvidas pelo backend | Fonte única da matriz perfil × operação |
-| DF05 | `page.tsx` server + tela cliente em `_components/`; `cacheComponents` ligado | Exigência do Next 16 para `instant = false` e para `metadata` |
-| DF06 | `ClientOnly` (`useSyncExternalStore`) no lugar de `use(browser())` | Mesmo efeito sem promessa pendente no servidor |
+| DF05 | Rotas em `app.tsx` com `lazy` por tela e `AppShell` como rota de layout | Pacote inicial menor (459 kB em vez de 1,17 MB) e área logada num único ponto |
+| DF06 | Sem `ClientOnly`: toda a aplicação roda no navegador | Não há renderização no servidor numa SPA |
 | DF07 | Catálogo de operadores e ações lido de `GET /catalogo` | Evita duplicar o registro do ADR-002 no front |
 | DF08 | Validação Zod só para UX; erros de campo do servidor mapeados para o formulário | O backend continua decidindo (P2, contêineres) |
 | DF09 | Toast global para falhas de mutations sem formulário (`meta.erroTratadoNaTela`) | Recusas como 403 e coluna inexistente nunca ficam silenciosas |
 | DF10 | Consulta periódica de 1 s só enquanto a simulação está em execução | ADR-008 (a SPA consulta o estado) |
 | DF11 | Testes de tela com MSW sobre o cliente real e E2E com Playwright contra back/front compilados | Cobrir a camada inteira (componente → hook → service → cliente) e o sistema real |
-| DF12 | Next.js 16.4.6 | O build com 16.4.3 (versão do kit) parou por vulnerabilidade conhecida; atualizado para o patch mais recente |
+| DF12 | Migração de Next.js para SPA com Vite + React Router, mantendo services, hooks, stores, schemas e telas | A ADR-001 define SPA em React; o Next trazia renderização no servidor não prevista na arquitetura |
+| DF13 | Tema padrão do Untitled UI no lugar do `lawd-theme.css` | Decisão do grupo pela identidade visual padrão da biblioteca |
+| DF14 | Vitest 4.1 (não o 5) | No Vitest 5 a conversão de `FormData` do jsdom trava o upload multipart sob o MSW; o 4.1 aceita o Vite 8 e mantém os testes de upload |
 
 ---
 
 ## 5. Tecnologias e dependências
 
-Execução: `next` 16.4.6, `react`/`react-dom` 19.3, `react-aria-components` 1.21, `tailwindcss` 4.3,
-`@untitledui/icons` 0.0.23, `next-themes` 0.4.6, `axios` 1.21.1, `@tanstack/react-query` 5.108.2,
-`zustand` 5.1.0, `react-hook-form` 7.92.0, `zod` 4.6.7, `@hookform/resolvers` 5.9.2, `moment` 2.31.0,
-`sonner` 2.0.8. Desenvolvimento: TypeScript 6, ESLint 9 + `eslint-config-next` 16.4.6, Prettier 3
-(ordem de imports e classes Tailwind), Vitest 3.2.7, `@vitest/coverage-v8` 3.2.7, Testing Library
-(React 16.3, user-event 14.6, jest-dom 6.10), jsdom 26, MSW 2.15, Playwright 1.57. Versões exatas em
+Execução: `react`/`react-dom` 19.3, `react-router` 8.5, `react-aria-components` 1.21, `tailwindcss`
+4.3, `@untitledui/icons` 0.0.23, `axios` 1.21.1, `@tanstack/react-query` 5.108.2, `zustand` 5.1.0,
+`react-hook-form` 7.92.0, `zod` 4.6.7, `@hookform/resolvers` 5.9.2, `moment` 2.31.0, `sonner` 2.0.8.
+Desenvolvimento: Vite 8.3 (`@vitejs/plugin-react`, `@tailwindcss/vite`), TypeScript 6, ESLint 9 +
+`typescript-eslint` 8.73 + `eslint-plugin-react-hooks` 7.1, Prettier 3 (ordem de imports e classes
+Tailwind), Vitest 4.1.12, `@vitest/coverage-v8` 4.1.12, Testing Library (React 16.3, user-event 14.6,
+jest-dom 6.9.1), jsdom 26, MSW 2.15, Playwright 1.57. Versões exatas em
 `front/package.json` e `front/package-lock.json`.
 
 ---
@@ -236,14 +242,15 @@ sintéticas em `src/test/fixtures.ts`.
 | F09 | `tratamento_painel.test.tsx` | 6 |
 | F10 | `diagnostico_tela.test.tsx` | 6 |
 
-Cobertura (V8, excluindo os componentes e utilitários copiados do kit Untitled UI): **92,49% das
-linhas, 87,9% dos ramos, 88,66% das funções**. Hooks de dados, services, stores e componentes
-próprios ficam entre 94% e 100%; os arquivos sem cobertura são `app/layout.tsx`, `app/page.tsx`,
-`app/not-found.tsx` e `components/providers.tsx`, exercitados no ensaio ponta a ponta.
+Cobertura (V8, excluindo os componentes, provedores e utilitários copiados do kit Untitled UI):
+**90,84% das linhas, 84,03% dos ramos, 83,8% das funções**. Os arquivos sem cobertura são
+`app.tsx` (rotas), `pages/login/login_pagina.tsx`, `pages/inicio_pagina.tsx`,
+`pages/nao_encontrada_pagina.tsx` e `components/layout/titulo_pagina.tsx`, exercitados no ensaio
+ponta a ponta.
 
 ### 6.2 Ensaio ponta a ponta (Playwright)
 
-`front/e2e/fluxo_completo.spec.ts`, contra `back/dist` (PostgreSQL 16 real) e o front compilado,
+`front/e2e/fluxo_completo.spec.ts`, contra `back/dist` (PostgreSQL 16 real) e a SPA compilada servida pelo `vite preview`,
 em 1366 × 768: analista importa `tests/fixtures/csv/atendimentos.csv`, cria uma regra de cada dimensão,
 monta e associa o conjunto, simula (linhas `3, 8, 14`, `6, 16` e `4, 9, 11`, iguais ao gabarito) e
 aplica o tratamento (versão 2); gestor vê unicidade 91,67%, completude 87,50% e validade 87,50%,
@@ -260,9 +267,10 @@ cobertura completa, exporta o XLSX e é barrado em `/datasets`; equipe técnica 
 | Lint | `npm run lint` | 0 erros, 0 avisos |
 | Tipos | `npm run typecheck` | Sem erros |
 | Testes | `npm test` | **106/106 aprovados**, 0 falhas |
-| Build | `npm run build` | Concluído; 14 páginas (incluindo as dinâmicas `/datasets/[id]`, `/regras/[id]`, `/conjuntos/[id]`, `/simulacoes/[id]` e `/auditoria/[id]`), além de `/_not-found` e `/icon.png` |
-| Ponta a ponta | `CHROMIUM_PATH=/usr/bin/chromium npm run test:e2e` | **1/1 aprovado** (~24 s), Chromium 157 do sistema |
-| Backend (regressão) | `npm test` e `npm run test:integracao` em `back/` | 320/320 e 102/102 aprovados |
+| Build | `npm run build` | Concluído; arquivos estáticos em `dist/`, pacote inicial de 459 kB (142 kB gzip) e um pacote por tela |
+| Ponta a ponta | `CHROMIUM_PATH=<chromium do Playwright> npm run test:e2e` | **1/1 aprovado** (~28 s) |
+| Imagem de produção | `docker compose up` com o `docker-compose.yml` da raiz | SPA servida pelo nginx (fallback de rotas para `index.html`), login, upload de 9 MB e logout pelo HTTPS do proxy |
+| Backend (regressão) | `npm test` em `back/` | 321/321 aprovados |
 
 Ambiente: Linux x86_64, Node.js 24.13.0 (o CI usa Node.js 22), PostgreSQL 16.16.
 
@@ -274,10 +282,10 @@ Ambiente: Linux x86_64, Node.js 24.13.0 (o CI usa Node.js 22), PostgreSQL 16.16.
 |----|-----------|---------|
 | PF01 | CTN004 (walkthrough de usabilidade) não foi conduzido | Usabilidade não comprovada por ensaio com integrantes (RNF004, Q06) |
 | PF02 | CTN007: ensaio só no Chromium; Firefox não está instalado no ambiente | Compatibilidade com Firefox e leitura de PDF/XLSX em leitores externos não verificadas (RNF007) |
-| PF03 | Arquivos de tema do SimMAP não estavam disponíveis; `lawd-theme.css` foi reconstruído com o mesmo contrato (paletas, fontes, vidro) | Cores exatas da identidade da LAWD podem divergir e devem ser substituídas pelos valores oficiais |
+| PF03 | Identidade visual é a padrão do Untitled UI | Marca própria do DataQualiSUS, se desejada, exige revisão de `styles/theme.css` com autorização (componentes congelados) |
 | PF04 | Pipeline do GitHub Actions (`front.yml`) não verificado nesta sessão (`gh` indisponível) | O resultado remoto precisa ser conferido |
 | PF05 | O E2E instala o Chromium do Playwright no CI; localmente usa `CHROMIUM_PATH` | Diferença de versão do navegador entre ambientes |
-| PF06 | `npm audit` aponta 2 vulnerabilidades moderadas em `postcss-selector-parser` (cadeia de dependências de desenvolvimento do Tailwind) | Sem efeito em produção; correção exige atualização com quebra |
+| PF06 | `npm audit` aponta 4 vulnerabilidades moderadas (`postcss-selector-parser` via `@tailwindcss/typography` e `minimatch` via o plugin de ordenação de imports do Prettier) | Ferramentas de build e formatação, fora dos arquivos servidos; correção exige atualização com quebra |
 | PF07 | Datas e números são exibidos no fuso e formato do navegador (pt-BR); o extrato mostra o instante UTC literal ao lado | Usuários em outro fuso veem horários locais |
 | PF08 | O frontend não implementa importação de vocabulário nem cadastro de contas | Coerente com ADR-009 e com a seção 8.3 da P1 (feitos por script) |
 
@@ -316,3 +324,26 @@ Ambiente: Linux x86_64, Node.js 24.13.0 (o CI usa Node.js 22), PostgreSQL 16.16.
 | `fa4f507` | feat(front): adicionado painel de diagnóstico com exportação PDF e XLSX (F10) |
 | `e76cae2` | test(front): adicionado ensaio ponta a ponta com Playwright |
 | `f11396c` | ci: adicionado pipeline do frontend com ensaio ponta a ponta |
+
+### 9.1 Migração para SPA com Vite
+
+O front foi refeito como SPA em React, conforme a ADR-001, com as mesmas regras de
+`front/README.md` (Untitled UI, cliente axios único, TanStack Query, Zustand, react-hook-form + Zod)
+e o tema padrão do Untitled UI. Cada commit reproduz o estado de uma funcionalidade da versão
+anterior já na nova base; em todos, formatação, lint, tipos, testes e build passam.
+
+| Commit | Mensagem | Testes |
+|--------|----------|--------|
+| `2b9cf91` | refactor(front): substituída a base Next.js por SPA React com Vite | 10 |
+| `b15c980` | refactor(front): migrada a autenticação para a SPA (F01) | 19 |
+| `f307a91` | refactor(front): migrado o acesso por perfil para a SPA (F02) | 27 |
+| `ed4acf5` | refactor(front): migrada a importação de datasets CSV para a SPA (F03) | 39 |
+| `f9028c3` | refactor(front): migrados os datasets e versões para a SPA (F04) | 47 |
+| `a284f92` | refactor(front): migrada a consulta de vocabulários para a SPA (F05) | 51 |
+| `e9209c3` | refactor(front): migradas as regras visuais e conjuntos para a SPA (F06) | 83 |
+| `1ad5c84` | refactor(front): migrada a simulação com limite para a SPA (F07) | 89 |
+| `a0de375` | refactor(front): migrados os extratos de auditoria para a SPA (F08) | 94 |
+| `95ad7c3` | refactor(front): migrada a aplicação do tratamento para a SPA (F09) | 100 |
+| `8e8eec8` | refactor(front): migrado o painel de diagnóstico para a SPA (F10) | 106 |
+| `7377ba2` | test(front): adaptado o ensaio ponta a ponta ao vite preview | 106 + E2E |
+| `904a302` | fix(front): regenerado o lockfile compatível com o npm 10 | 106 |
