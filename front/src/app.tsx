@@ -12,6 +12,7 @@ const DatasetsTela = lazy(() => import("@/pages/datasets/_components/datasets_te
 const DatasetDetalheTela = lazy(() =>
     import("@/pages/datasets/detalhe/_components/dataset_detalhe_tela").then((modulo) => ({ default: modulo.DatasetDetalheTela })),
 );
+const VocabulariosTela = lazy(() => import("@/pages/vocabularios/_components/vocabularios_tela").then((modulo) => ({ default: modulo.VocabulariosTela })));
 
 /** Rotas da SPA: T00 pública e T01–T07 dentro da área logada (`AppShell`). */
 export function App() {
@@ -41,6 +42,14 @@ export function App() {
                         element={
                             <TituloPagina titulo="Dataset">
                                 <DatasetDetalheTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/vocabularios"
+                        element={
+                            <TituloPagina titulo="Vocabulários">
+                                <VocabulariosTela />
                             </TituloPagina>
                         }
                     />
