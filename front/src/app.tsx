@@ -23,6 +23,7 @@ const SimulacoesTela = lazy(() => import("@/pages/simulacoes/_components/simulac
 const SimulacaoDetalheTela = lazy(() =>
     import("@/pages/simulacoes/detalhe/_components/simulacao_detalhe_tela").then((modulo) => ({ default: modulo.SimulacaoDetalheTela })),
 );
+const DiagnosticoTela = lazy(() => import("@/pages/diagnosticos/_components/diagnostico_tela").then((modulo) => ({ default: modulo.DiagnosticoTela })));
 const AuditoriaTela = lazy(() => import("@/pages/auditoria/_components/auditoria_tela").then((modulo) => ({ default: modulo.AuditoriaTela })));
 const ExtratoTela = lazy(() => import("@/pages/auditoria/detalhe/_components/extrato_tela").then((modulo) => ({ default: modulo.ExtratoTela })));
 
@@ -110,6 +111,14 @@ export function App() {
                         element={
                             <TituloPagina titulo="Simulação">
                                 <SimulacaoDetalheTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/diagnosticos"
+                        element={
+                            <TituloPagina titulo="Diagnóstico de qualidade">
+                                <DiagnosticoTela />
                             </TituloPagina>
                         }
                     />

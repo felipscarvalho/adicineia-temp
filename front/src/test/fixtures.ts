@@ -1,5 +1,6 @@
 import type { ExtratoDetalhe } from "@/types/audit";
 import type { Dataset } from "@/types/datasets";
+import type { Diagnostico } from "@/types/diagnostics";
 import type { Catalogo, Conjunto, Regra } from "@/types/rules/regra";
 import type { Vocabulario } from "@/types/rules/vocabulario";
 import type { Simulacao } from "@/types/simulations";
@@ -267,4 +268,36 @@ export const extratoExemplo: ExtratoDetalhe = {
             },
         ],
     },
+};
+
+export const diagnosticoParcial: Diagnostico = {
+    dataset: { id: "d1", nome: "Internações", situacao: "ATIVO" },
+    versao: { id: "v1", numero: 1, hashSha256: "d".repeat(64) },
+    simulacaoId: "s9",
+    conjunto: { id: "c9", nome: "Conjunto internações", revisao: 1 },
+    avaliadoEm: "2026-11-21T13:00:00.000Z",
+    totalLinhas: 21,
+    cobertura: { dimensoesAvaliadas: 2, totalDimensoes: 3, situacao: "PARCIAL" },
+    indicadores: [
+        { dimensao: "UNICIDADE", situacao: "NAO_AVALIADA", percentual: null, numerador: null, denominador: null, linhasComViolacao: null, regras: [] },
+        {
+            dimensao: "COMPLETUDE",
+            situacao: "AVALIADA",
+            percentual: 85.71,
+            numerador: 18,
+            denominador: 21,
+            linhasComViolacao: 3,
+            regras: [{ regraId: "r1", revisao: 1, nome: "Diagnóstico informado", colunas: ["diagnostico"] }],
+        },
+        {
+            dimensao: "VALIDADE",
+            situacao: "AVALIADA",
+            percentual: 57.14,
+            numerador: 12,
+            denominador: 21,
+            linhasComViolacao: 9,
+            regras: [{ regraId: "r2", revisao: 1, nome: "Valor positivo", colunas: ["valor_total"] }],
+        },
+    ],
+    aviso: "Os indicadores descrevem somente as regras executadas nesta avaliação e não constituem certificação, atestado ou garantia de confiabilidade clínica dos dados.",
 };
