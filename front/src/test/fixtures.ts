@@ -1,3 +1,4 @@
+import type { ExtratoDetalhe } from "@/types/audit";
 import type { Dataset } from "@/types/datasets";
 import type { Catalogo, Conjunto, Regra } from "@/types/rules/regra";
 import type { Vocabulario } from "@/types/rules/vocabulario";
@@ -208,4 +209,62 @@ export const simulacaoEmExecucao: Simulacao = {
     totalPrevistoAfetadas: null,
     resultados: [],
     previa: [],
+};
+
+export const extratoExemplo: ExtratoDetalhe = {
+    id: "e1",
+    operacao: "TRATAMENTO",
+    simulacaoId: "s1",
+    dataset: { id: "d1", nome: "Atendimentos 2025", situacao: "EXCLUIDO_LOGICAMENTE" },
+    usuarioId: "u-analista",
+    instanteUtc: "2026-11-21T12:05:00.000Z",
+    versaoEntrada: { id: "v1", numero: 1, hashSha256: "a".repeat(64) },
+    versaoSaida: { id: "v2", numero: 2, hashSha256: "b".repeat(64) },
+    conjunto: { id: "c1", revisao: 3 },
+    revisoesRegras: [{ regraId: "r-sexo", revisao: 1, nome: "Sexo informado", ordem: 1 }],
+    acoesAplicadas: [{ ordem: 1, regraId: "r-sexo", acao: "PREENCHER_VAZIO", coluna: "sexo" }],
+    totalLinhasAlteradas: 2,
+    totalLinhasRemovidas: 1,
+    totalLinhasAfetadas: 3,
+    totalAlteracoes: 3,
+    alteracoes: {
+        pagina: 1,
+        tamanho: 50,
+        total: 3,
+        itens: [
+            {
+                linha: 3,
+                tipo: "ATUALIZACAO",
+                regraId: "r-sexo",
+                regraRevisao: 1,
+                acao: "PREENCHER_VAZIO",
+                coluna: "sexo",
+                valorAnterior: "",
+                valorNovo: "NAO_INFORMADO",
+                linhaRepresentante: null,
+            },
+            {
+                linha: 6,
+                tipo: "REMOCAO",
+                regraId: "r-id",
+                regraRevisao: 1,
+                acao: "REMOVER_REPETICOES",
+                coluna: null,
+                valorAnterior: null,
+                valorNovo: null,
+                linhaRepresentante: 2,
+            },
+            {
+                linha: 14,
+                tipo: "ATUALIZACAO",
+                regraId: "r-sexo",
+                regraRevisao: 1,
+                acao: "PREENCHER_VAZIO",
+                coluna: "sexo",
+                valorAnterior: "   ",
+                valorNovo: "NAO_INFORMADO",
+                linhaRepresentante: null,
+            },
+        ],
+    },
 };

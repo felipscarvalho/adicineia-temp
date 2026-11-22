@@ -23,6 +23,8 @@ const SimulacoesTela = lazy(() => import("@/pages/simulacoes/_components/simulac
 const SimulacaoDetalheTela = lazy(() =>
     import("@/pages/simulacoes/detalhe/_components/simulacao_detalhe_tela").then((modulo) => ({ default: modulo.SimulacaoDetalheTela })),
 );
+const AuditoriaTela = lazy(() => import("@/pages/auditoria/_components/auditoria_tela").then((modulo) => ({ default: modulo.AuditoriaTela })));
+const ExtratoTela = lazy(() => import("@/pages/auditoria/detalhe/_components/extrato_tela").then((modulo) => ({ default: modulo.ExtratoTela })));
 
 /** Rotas da SPA: T00 pública e T01–T07 dentro da área logada (`AppShell`). */
 export function App() {
@@ -108,6 +110,22 @@ export function App() {
                         element={
                             <TituloPagina titulo="Simulação">
                                 <SimulacaoDetalheTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/auditoria"
+                        element={
+                            <TituloPagina titulo="Auditoria">
+                                <AuditoriaTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/auditoria/:id"
+                        element={
+                            <TituloPagina titulo="Extrato de auditoria">
+                                <ExtratoTela />
                             </TituloPagina>
                         }
                     />
