@@ -714,3 +714,14 @@ RNF005 (CTN005 em `ct001-importacao` e `ct005-diagnostico`), RNF006 (evidência 
 Cada commit de funcionalidade foi validado antes do envio com formatação, lint, verificação de
 tipos e as suítes unitária e de integração disponíveis até aquele ponto. O commit deste relatório e
 do README segue o último da tabela.
+
+---
+
+## 13. Alterações posteriores (frontend)
+
+| Commit | Alteração | Validação |
+|--------|-----------|-----------|
+| `8e437a2` | Projeto movido de `backend/` para `back/`; caminhos de testes, CI e documentos atualizados | 319/319 unitários e 102/102 de integração aprovados após a mudança |
+| `c620f07` | `POST /auth/entrar` e `GET /auth/sessao` devolvem `permissoes` (`operacoesDoPapel` em `auth/matriz-permissoes.ts`), para a interface ocultar ações vedadas | 320/320 unitários e 102/102 de integração aprovados; CT007 confere o novo campo |
+
+O frontend que consome esta API está descrito em `RELATORIO_IMPLEMENTACAO_FRONTEND.md`.

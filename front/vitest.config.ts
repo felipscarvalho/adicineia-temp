@@ -22,6 +22,8 @@ export default defineConfig({
                 "src/components/foundations/**",
                 "src/components/shared-assets/**",
                 "src/components/marketing/**",
+                "src/utils/**",
+                "src/hooks/use-*.ts",
                 "src/test/**",
                 "src/**/*.test.{ts,tsx}",
             ],

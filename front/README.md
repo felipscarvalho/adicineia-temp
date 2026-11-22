@@ -67,7 +67,7 @@ Tipos das respostas e payloads da API, espelhando os DTOs do backend.
 
 * A sessão é o cookie HttpOnly do backend, invisível ao JavaScript; por isso o `user_store` não persiste nada no `localStorage`: a cada carga, `revalidate()` chama `GET /auth/sessao` e recupera usuário, permissões (`permissoes`, derivadas da matriz perfil × operação do backend) e token CSRF
 * Páginas autenticadas ficam no route group `app/(app)/`, cujo layout (`AppShell`) só monta no navegador (`ClientOnly`), redireciona sem sessão, revalida o usuário e monta a sidebar filtrada por permissão. A sidebar é dividida em seções por módulo (`components/navigation/navegacao.ts`): tela nova entra na seção do seu módulo, com a operação exigida
-* Toda página nova em `app/(app)/` exporta `export const instant = false`
+* Toda página nova em `app/(app)/` exporta `export const instant = false` (exige `cacheComponents: true` no `next.config.ts`). O `page.tsx` é um server component que só declara a configuração e o `metadata` e renderiza a tela cliente de `_components/` (`<Nome>Tela`), que lê parâmetros com `useParams`
 * Botões e ações aparecem só com a permissão necessária (`usePermissions().can/canAnywhere`); telas inteiras usam `PermissionGate`. O backend continua sendo quem garante
 * Logout usa `window.location.href` (recarga completa), porque o Next mantém rotas montadas em segundo plano
 

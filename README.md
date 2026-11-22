@@ -4,10 +4,13 @@ Aplicação web para avaliação e tratamento controlado da qualidade de dataset
 (unicidade, completude e validade), desenvolvida no Projeto Integrador de COMP0503 —
 Engenharia de Software (UFS/DCOMP, 2026.2), equipe P2611.
 
-Este repositório contém o **backend** (API NestJS), os scripts de banco e os testes automatizados.
+Este repositório contém o **backend** (API NestJS, em `back/`), o **frontend** (SPA Next.js/React,
+em `front/`), os scripts de banco e os testes automatizados.
 A especificação de referência está na P1 v1.3 (requisitos) e na P2 v1.1 (análise, projeto e
-arquitetura); a organização segue a seção 6.1 da P3. O relatório técnico da implementação está em
-[`RELATORIO_IMPLEMENTACAO_BACKEND.md`](RELATORIO_IMPLEMENTACAO_BACKEND.md).
+arquitetura); a organização segue a seção 6.1 da P3. Os relatórios técnicos estão em
+[`RELATORIO_IMPLEMENTACAO_BACKEND.md`](RELATORIO_IMPLEMENTACAO_BACKEND.md) e
+[`RELATORIO_IMPLEMENTACAO_FRONTEND.md`](RELATORIO_IMPLEMENTACAO_FRONTEND.md); a arquitetura do
+front está em [`front/README.md`](front/README.md).
 
 ## Estrutura
 
@@ -23,9 +26,11 @@ arquitetura); a organização segue a seção 6.1 da P3. O relatório técnico d
 | `back/src/diagnostics/` | Diagnóstico de qualidade e exportação PDF/XLSX (RF005) |
 | `back/src/cli/` | Scripts de migração, contas de demonstração, vocabulário e limpeza de órfãos |
 | `database/` | Migrações SQL do PostgreSQL 16 e script de papéis do banco |
-| `tests/integracao/` | Testes de integração (CT001–CT007 e CTN aplicáveis) |
+| `front/` | SPA em Next.js 16 + React 19 + Untitled UI (telas T00–T07) |
+| `front/e2e/` | Ensaio ponta a ponta com Playwright contra back e front reais |
+| `tests/integracao/` | Testes de integração do backend (CT001–CT007 e CTN aplicáveis) |
 | `tests/fixtures/` | Datasets sintéticos com gabaritos por linha e regra e amostra de vocabulário |
-| `.github/workflows/` | Integração contínua do backend |
+| `.github/workflows/` | Integração contínua do backend (`back.yml`) e do frontend (`front.yml`) |
 
 ## Pré-requisitos
 
@@ -47,6 +52,18 @@ npm run vocabulario:importar -- --arquivo=<cid10.csv> --nome=CID-10 \
 npm run build && npm run start:prod           # API em http://localhost:3000/api
 ```
 
+Frontend (com a API em execução na porta 3000):
+
+```bash
+cd front
+npm ci
+cp .env.example .env.local                    # NEXT_PUBLIC_API_URL=/api e API_PROXY_URL do backend
+npm run build && npm run start                # SPA em http://localhost:3001
+```
+
+O Next encaminha `/api/*` ao backend, então SPA e API ficam no mesmo domínio e o cookie de sessão
+funciona sem configuração de CORS.
+
 Contas criadas pelo seed: `analista@dataqualisus.local`, `gestor@dataqualisus.local` e
 `equipe.tecnica@dataqualisus.local`. Não há autocadastro (P1, seção 8.3).
 
@@ -65,6 +82,9 @@ npm test                  # testes unitários (sem banco)
 npm run test:integracao   # testes de integração (PostgreSQL 16 em TEST_DATABASE_URL)
 npm run test:cov          # cobertura dos testes unitários
 ```
+
+No frontend (`cd front`): `npm run lint`, `npm run typecheck`, `npm test` (Vitest + Testing Library +
+MSW), `npm run build` e `npm run test:e2e` (Playwright, ver `front/e2e/README.md`).
 
 Os testes de integração recriam o banco `dataqualisus_teste` a cada execução. Por padrão usam
 `postgres://dataqualisus:dataqualisus_dev@localhost:55432/dataqualisus_teste` (o contêiner do
