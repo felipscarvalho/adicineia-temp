@@ -1,8 +1,9 @@
 import type { ReactElement, ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nProvider } from "react-aria-components";
+import { criarQueryClient } from "@/components/query_provider";
 import { useUserStore } from "@/stores/user_store";
 import type { Sessao } from "@/types/auth";
 import { sessaoAnalista } from "./servidor";
@@ -15,7 +16,8 @@ export function renderizar(ui: ReactElement, opcoes: { sessao?: Sessao | null } 
     } else {
         useUserStore.setState({ usuario: null, permissoes: [], csrfToken: null, situacao: "anonimo" });
     }
-    const cliente = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const cliente = criarQueryClient();
+    cliente.setDefaultOptions({ queries: { retry: false }, mutations: { retry: false } });
     const Envoltorio = ({ children }: { children: ReactNode }) => (
         <QueryClientProvider client={cliente}>
             <I18nProvider locale="pt-BR">{children}</I18nProvider>
