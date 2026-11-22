@@ -21,8 +21,8 @@ export function useImportarDataset() {
     });
 }
 
-export function useDataset(id: string) {
-    return useQuery({ queryKey: datasetKeys.detail(id), queryFn: () => datasetsService.obterDataset(id) });
+export function useDataset(id: string, habilitado = true) {
+    return useQuery({ queryKey: datasetKeys.detail(id), queryFn: () => datasetsService.obterDataset(id), enabled: habilitado && Boolean(id) });
 }
 
 export function useAtualizarMetadados(id: string) {

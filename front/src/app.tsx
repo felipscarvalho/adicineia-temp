@@ -19,6 +19,10 @@ const ConjuntosTela = lazy(() => import("@/pages/conjuntos/_components/conjuntos
 const ConjuntoDetalheTela = lazy(() =>
     import("@/pages/conjuntos/detalhe/_components/conjunto_detalhe_tela").then((modulo) => ({ default: modulo.ConjuntoDetalheTela })),
 );
+const SimulacoesTela = lazy(() => import("@/pages/simulacoes/_components/simulacoes_tela").then((modulo) => ({ default: modulo.SimulacoesTela })));
+const SimulacaoDetalheTela = lazy(() =>
+    import("@/pages/simulacoes/detalhe/_components/simulacao_detalhe_tela").then((modulo) => ({ default: modulo.SimulacaoDetalheTela })),
+);
 
 /** Rotas da SPA: T00 pública e T01–T07 dentro da área logada (`AppShell`). */
 export function App() {
@@ -88,6 +92,22 @@ export function App() {
                         element={
                             <TituloPagina titulo="Conjunto de regras">
                                 <ConjuntoDetalheTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/simulacoes"
+                        element={
+                            <TituloPagina titulo="Simulações">
+                                <SimulacoesTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/simulacoes/:id"
+                        element={
+                            <TituloPagina titulo="Simulação">
+                                <SimulacaoDetalheTela />
                             </TituloPagina>
                         }
                     />
