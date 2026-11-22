@@ -4,6 +4,7 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { I18nProvider } from "react-aria-components";
 import { MemoryRouter } from "react-router";
+import { Toaster } from "@/components/feedback/toast";
 import { criarQueryClient } from "@/components/query_provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { useUserStore } from "@/stores/user_store";
@@ -24,7 +25,10 @@ export function renderizar(ui: ReactElement, opcoes: { sessao?: Sessao | null } 
         <ThemeProvider>
             <MemoryRouter>
                 <QueryClientProvider client={cliente}>
-                    <I18nProvider locale="pt-BR">{children}</I18nProvider>
+                    <I18nProvider locale="pt-BR">
+                        {children}
+                        <Toaster />
+                    </I18nProvider>
                 </QueryClientProvider>
             </MemoryRouter>
         </ThemeProvider>

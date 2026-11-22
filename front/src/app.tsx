@@ -13,6 +13,12 @@ const DatasetDetalheTela = lazy(() =>
     import("@/pages/datasets/detalhe/_components/dataset_detalhe_tela").then((modulo) => ({ default: modulo.DatasetDetalheTela })),
 );
 const VocabulariosTela = lazy(() => import("@/pages/vocabularios/_components/vocabularios_tela").then((modulo) => ({ default: modulo.VocabulariosTela })));
+const RegrasTela = lazy(() => import("@/pages/regras/_components/regras_tela").then((modulo) => ({ default: modulo.RegrasTela })));
+const RegraDetalheTela = lazy(() => import("@/pages/regras/detalhe/_components/regra_detalhe_tela").then((modulo) => ({ default: modulo.RegraDetalheTela })));
+const ConjuntosTela = lazy(() => import("@/pages/conjuntos/_components/conjuntos_tela").then((modulo) => ({ default: modulo.ConjuntosTela })));
+const ConjuntoDetalheTela = lazy(() =>
+    import("@/pages/conjuntos/detalhe/_components/conjunto_detalhe_tela").then((modulo) => ({ default: modulo.ConjuntoDetalheTela })),
+);
 
 /** Rotas da SPA: T00 pública e T01–T07 dentro da área logada (`AppShell`). */
 export function App() {
@@ -50,6 +56,38 @@ export function App() {
                         element={
                             <TituloPagina titulo="Vocabulários">
                                 <VocabulariosTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/regras"
+                        element={
+                            <TituloPagina titulo="Regras">
+                                <RegrasTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/regras/:id"
+                        element={
+                            <TituloPagina titulo="Regra">
+                                <RegraDetalheTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/conjuntos"
+                        element={
+                            <TituloPagina titulo="Conjuntos de regras">
+                                <ConjuntosTela />
+                            </TituloPagina>
+                        }
+                    />
+                    <Route
+                        path="/conjuntos/:id"
+                        element={
+                            <TituloPagina titulo="Conjunto de regras">
+                                <ConjuntoDetalheTela />
                             </TituloPagina>
                         }
                     />
